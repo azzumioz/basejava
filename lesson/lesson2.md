@@ -32,10 +32,10 @@
 
 ## Домашнее задание
 
-> Правка к видео: ArrayStorage.delete() - вместо `storage[i] = null` нужно `storage[size-1] = null`
+> Правка к видео: com.urise.webapp.storage.ArrayStorage.delete() - вместо `storage[i] = null` нужно `storage[size-1] = null`
 
 - Прочитать <a href="http://www.intuit.ru/studies/courses/16/16/lecture/27113?page=4">Соглашения по именованию.</a>
-- Реализовать `ArrayStorage.update`
-- Сделать проверки: в `update/delete/get` - резюме есть в storage, в `save`- нет в storage: `System.out.println("Resume ...")`.
+- Реализовать `com.urise.webapp.storage.ArrayStorage.update`
+- Сделать проверки: в `update/delete/get` - резюме есть в storage, в `save`- нет в storage: `System.out.println("com.urise.webapp.model.Resume ...")`.
 - Сделать в save проверку на переполнениеe: `System.out.println("...")`.
-- Избавится от дублирования в коде `ArrayStorage`
+- Избавится от дублирования в коде `com.urise.webapp.storage.ArrayStorage`

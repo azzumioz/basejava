@@ -28,7 +28,9 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        isResume(r.getUuid());
+        if (!isResume(r.getUuid())) {
+            System.out.println("Resume with uuid " + r.getUuid() + " not found");
+        }
 
     }
 
