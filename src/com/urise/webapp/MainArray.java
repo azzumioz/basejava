@@ -53,11 +53,9 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    try {
-                        ARRAY_STORAGE.update(ARRAY_STORAGE.get(uuid));
-                    } catch (NullPointerException e) {
-                        //NOP
-                    }
+                    r = new Resume();
+                    r.setUuid(uuid);
+                    ARRAY_STORAGE.update(r);
                     printAll();
                     break;
                 case "exit":
