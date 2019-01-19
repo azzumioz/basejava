@@ -69,7 +69,7 @@ public abstract class AbstractArrayStorageTest {
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1);
         storage.update(RESUME_5);
-        Assert.assertSame(RESUME_1, storage.get(UUID_1));
+        Assert.assertSame(RESUME_5, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
