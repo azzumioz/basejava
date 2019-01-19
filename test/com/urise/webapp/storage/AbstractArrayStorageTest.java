@@ -8,8 +8,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-
 public abstract class AbstractArrayStorageTest {
     private Storage storage;
 
@@ -18,12 +16,10 @@ public abstract class AbstractArrayStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String DUMMY = "dummy";
 
-    private Resume r1 = new Resume(UUID_1);
-    private Resume r2 = new Resume(UUID_2);
-    private Resume r3 = new Resume(UUID_3);
-    private Resume r4 = new Resume(DUMMY);
-
-    protected static final int STORAGE_LIMIT = 10_000;
+    private static final Resume RESUME_1 = new Resume(UUID_1);
+    private static final Resume RESUME_2 = new Resume(UUID_2);
+    private static final Resume RESUME_3 = new Resume(UUID_3);
+    private static final Resume RESUME_4 = new Resume(DUMMY);
 
 
     protected AbstractArrayStorageTest(Storage storage) {
@@ -33,9 +29,9 @@ public abstract class AbstractArrayStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(r1);
-        storage.save(r2);
-        storage.save(r3);
+        storage.save(RESUME_1);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
     }
 
     @Test
@@ -46,45 +42,43 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void save() {
-        storage.save(r4);
+        storage.save(RESUME_4);
         Assert.assertEquals(4, storage.size());
-        Assert.assertEquals(r4, storage.get(DUMMY));
+        Assert.assertEquals(RESUME_4, storage.get(DUMMY));
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
-        storage.save(r1);
+        storage.save(RESUME_1);
     }
 
     @Test
-    public void update() throws IllegalAccessException {
-        Field field = r1.getClass().getDeclaredFields()[0];
-        field.setAccessible(true);
-        field.set(r1, "new uuid");
-        storage.update(r1);
-        Assert.assertEquals(r1, storage.get("new uuid"));
+    public void update() {
+        Resume RESUME_5 = new Resume(UUID_1);
+        storage.update(RESUME_5);
+        Assert.assertNotSame(RESUME_1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateNotExist() {
-        storage.update(r4);
+        storage.update(RESUME_4);
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(r1, storage.get(UUID_1));
+        Assert.assertEquals(RESUME_1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
-        storage.get("dummy");
+        storage.get(DUMMY);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
         storage.delete(UUID_1);
         Assert.assertEquals(2, storage.size());
-        Assert.assertEquals(r1, storage.get(UUID_1));
+        Assert.assertEquals(RESUME_1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -94,10 +88,11 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void getAll() {
+        Resume[] array = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
         Assert.assertEquals(3, storage.size());
-        Assert.assertEquals(r1, storage.get(UUID_1));
-        Assert.assertEquals(r2, storage.get(UUID_2));
-        Assert.assertEquals(r3, storage.get(UUID_3));
+        for (Resume resume : array) {
+            Assert.assertEquals(resume, storage.get(resume.getUuid()));
+        }
     }
 
     @Test
@@ -107,12 +102,13 @@ public abstract class AbstractArrayStorageTest {
 
     @Test(expected = StorageException.class)
     public void saveOverflow() {
+        storage.clear();
         try {
-            for (int i = 0; i < STORAGE_LIMIT - 3; i++) {
+            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
                 storage.save(new Resume());
             }
         } catch (StorageException e) {
-            Assert.fail();
+            Assert.fail("Error: storage overflow before limit");
         }
         storage.save(new Resume());
     }
