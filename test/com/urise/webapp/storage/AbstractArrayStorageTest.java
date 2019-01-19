@@ -10,25 +10,32 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.*;
-
 public abstract class AbstractArrayStorageTest {
-    protected Storage storage;
+    private Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
+    private static final String DUMMY = "dummy";
 
-    public AbstractArrayStorageTest(Storage storage) {
+    private Resume r1 = new Resume(UUID_1);
+    private Resume r2 = new Resume(UUID_2);
+    private Resume r3 = new Resume(UUID_3);
+    private Resume r4 = new Resume(DUMMY);
+
+    protected static final int STORAGE_LIMIT = 10_000;
+
+
+    protected AbstractArrayStorageTest(Storage storage) {
         this.storage = storage;
     }
 
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(new Resume(UUID_1));
-        storage.save(new Resume(UUID_2));
-        storage.save(new Resume(UUID_3));
+        storage.save(r1);
+        storage.save(r2);
+        storage.save(r3);
     }
 
     @Test
@@ -39,35 +46,33 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void save() {
-        storage.save(new Resume("uuid4"));
-        Assert.assertEquals("uuid4", storage.get("uuid4").toString());
+        storage.save(r4);
+        Assert.assertEquals(4, storage.size());
+        Assert.assertEquals(r4, storage.get(DUMMY));
+    }
+
+    @Test(expected = ExistStorageException.class)
+    public void saveExist() {
+        storage.save(r1);
     }
 
     @Test
-    public void update() {
-        storage.update(storage.get(UUID_1));
-        Assert.assertEquals("uuid1", storage.get(UUID_1).toString());
+    public void update() throws IllegalAccessException {
+        Field field = r1.getClass().getDeclaredFields()[0];
+        field.setAccessible(true);
+        field.set(r1, "new uuid");
+        storage.update(r1);
+        Assert.assertEquals(r1, storage.get("new uuid"));
+    }
+
+    @Test(expected = NotExistStorageException.class)
+    public void updateNotExist() {
+        storage.update(r4);
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(UUID_1, storage.get(UUID_1).toString());
-    }
-
-    @Test
-    public void delete() {
-        storage.delete(UUID_1);
-        Assert.assertEquals(2, storage.size());
-    }
-
-    @Test
-    public void getAll() {
-        Assert.assertEquals(3, storage.size());
-    }
-
-    @Test
-    public void size() {
-        Assert.assertEquals(3, storage.size());
+        Assert.assertEquals(r1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -75,16 +80,41 @@ public abstract class AbstractArrayStorageTest {
         storage.get("dummy");
     }
 
-    @Test(expected = ExistStorageException.class)
-    public void getExist() {
-        storage.save(new Resume(UUID_1));
+    @Test(expected = NotExistStorageException.class)
+    public void delete() {
+        storage.delete(UUID_1);
+        Assert.assertEquals(2, storage.size());
+        Assert.assertEquals(r1, storage.get(UUID_1));
+    }
+
+    @Test(expected = NotExistStorageException.class)
+    public void deleteNotExist() {
+        storage.delete(DUMMY);
+    }
+
+    @Test
+    public void getAll() {
+        Assert.assertEquals(3, storage.size());
+        Assert.assertEquals(r1, storage.get(UUID_1));
+        Assert.assertEquals(r2, storage.get(UUID_2));
+        Assert.assertEquals(r3, storage.get(UUID_3));
+    }
+
+    @Test
+    public void size() {
+        Assert.assertEquals(3, storage.size());
     }
 
     @Test(expected = StorageException.class)
-    public void callOverflow() {
-        for (int i = 0; i < storage.size(); i++) {
-            storage.save(new Resume());
+    public void saveOverflow() {
+        try {
+            for (int i = 0; i < STORAGE_LIMIT - 3; i++) {
+                storage.save(new Resume());
+            }
+        } catch (StorageException e) {
+            Assert.fail();
         }
-        Assert.fail("Test not pass");
+        storage.save(new Resume());
     }
+
 }
