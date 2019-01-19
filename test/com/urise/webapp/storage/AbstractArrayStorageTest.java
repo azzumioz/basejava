@@ -52,11 +52,24 @@ public abstract class AbstractArrayStorageTest {
         storage.save(RESUME_1);
     }
 
+    @Test(expected = StorageException.class)
+    public void saveOverflow() {
+        storage.clear();
+        try {
+            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
+                storage.save(new Resume());
+            }
+        } catch (StorageException e) {
+            Assert.fail("Error: storage overflow before limit");
+        }
+        storage.save(new Resume());
+    }
+
     @Test
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1);
         storage.update(RESUME_5);
-        Assert.assertNotSame(RESUME_1, storage.get(UUID_1));
+        Assert.assertSame(RESUME_1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -78,7 +91,7 @@ public abstract class AbstractArrayStorageTest {
     public void delete() {
         storage.delete(UUID_1);
         Assert.assertEquals(2, storage.size());
-        Assert.assertEquals(RESUME_1, storage.get(UUID_1));
+        storage.get(UUID_1);
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -89,28 +102,13 @@ public abstract class AbstractArrayStorageTest {
     @Test
     public void getAll() {
         Resume[] array = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
-        Assert.assertEquals(3, storage.size());
-        for (Resume resume : array) {
-            Assert.assertEquals(resume, storage.get(resume.getUuid()));
-        }
+        Assert.assertEquals(3, storage.getAll().length);
+        Assert.assertArrayEquals(array, storage.getAll());
     }
 
     @Test
     public void size() {
         Assert.assertEquals(3, storage.size());
-    }
-
-    @Test(expected = StorageException.class)
-    public void saveOverflow() {
-        storage.clear();
-        try {
-            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
-            }
-        } catch (StorageException e) {
-            Assert.fail("Error: storage overflow before limit");
-        }
-        storage.save(new Resume());
     }
 
 }
