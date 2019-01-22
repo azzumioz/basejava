@@ -25,11 +25,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     @Override
     public void save(Resume r) {
         if (size < STORAGE_LIMIT) {
-            int index = getIndex(r.getUuid());
-            if (index > -1) {
+            int searchKey = getSearchKey(r.getUuid());
+            if (searchKey > -1) {
                 throw new ExistStorageException(r.getUuid());
             } else {
-                insertElement(r, index);
+                insertElement(r, searchKey);
                 size++;
             }
         } else {
@@ -39,9 +39,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     @Override
     public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index > -1) {
-            storage[index] = r;
+        int searchKey = getSearchKey(r.getUuid());
+        if (searchKey > -1) {
+            storage[searchKey] = r;
         } else {
             throw new NotExistStorageException(r.getUuid());
         }
@@ -49,18 +49,18 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     @Override
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        int searchKey = getSearchKey(uuid);
+        if (searchKey < 0) {
             throw new NotExistStorageException(uuid);
         }
-        return storage[index];
+        return storage[searchKey];
     }
 
     @Override
     public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index > -1) {
-            fillDeletedElement(index);
+        int searchKey = getSearchKey(uuid);
+        if (searchKey > -1) {
+            fillDeletedElement(searchKey);
             storage[size - 1] = null;
             size--;
         } else {
@@ -78,7 +78,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected abstract int getIndex(String uuid);
+    protected abstract int getSearchKey(String uuid);
 
     protected abstract void insertElement(Resume r, int index);
 

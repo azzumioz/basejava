@@ -1,8 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -17,44 +14,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index > -1) {
-            throw new ExistStorageException(r.getUuid());
-        } else {
-            storage.add(r);
-        }
+    protected void doSave(Resume r) {
+        storage.add(r);
     }
 
     @Override
-    public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index > -1) {
-            storage.set(index, r);
-        } else {
-            throw new NotExistStorageException(r.getUuid());
-        }
+    protected void doSet(int searchKey, Resume r) {
+        storage.set(searchKey, r);
     }
 
     @Override
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index > -1) {
-            return storage.get(index);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-    }
-
-    @Override
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index > -1) {
-            storage.remove(index);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-
+    protected Resume doGet(int searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
@@ -63,12 +34,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    protected void doRemove(int searchKey) {
+        storage.remove(searchKey);
+    }
+
+    @Override
     public int size() {
         return storage.size();
     }
 
-    //@Override
-    protected int getIndex(String uuid) {
-        return storage.indexOf(uuid);
+    @Override
+    protected int getSearchKey(String uuid) {
+        Resume searchKey = new Resume(uuid);
+        return storage.indexOf(searchKey);
     }
 }
