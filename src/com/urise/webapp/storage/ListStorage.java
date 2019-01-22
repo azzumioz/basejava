@@ -18,25 +18,21 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public void save(Resume r) {
-        if (storage.size() < STORAGE_LIMIT) {
-            int index = getIndex(r.getUuid());
-            if (index <= -1) {
-                storage.add(r);
-            } else {
-                throw new ExistStorageException(r.getUuid());
-            }
+        int index = getIndex(r.getUuid());
+        if (index > -1) {
+            throw new ExistStorageException(r.getUuid());
         } else {
-            throw new StorageException("Storage overflow", r.getUuid());
+            storage.add(r);
         }
     }
 
     @Override
     public void update(Resume r) {
         int index = getIndex(r.getUuid());
-        if (index <= -1) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
+        if (index > -1) {
             storage.set(index, r);
+        } else {
+            throw new NotExistStorageException(r.getUuid());
         }
     }
 
@@ -58,6 +54,7 @@ public class ListStorage extends AbstractStorage {
         } else {
             throw new NotExistStorageException(uuid);
         }
+
     }
 
     @Override
@@ -70,9 +67,8 @@ public class ListStorage extends AbstractStorage {
         return storage.size();
     }
 
-    @Override
+    //@Override
     protected int getIndex(String uuid) {
-        Resume searchKey = new Resume(uuid);
-        return storage.indexOf(searchKey);
+        return storage.indexOf(uuid);
     }
 }

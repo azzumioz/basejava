@@ -11,10 +11,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public abstract class AbstractArrayStorage extends AbstractStorage {
-
+    protected static final int STORAGE_LIMIT = 10_000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
-
 
 
     @Override
@@ -27,11 +26,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     public void save(Resume r) {
         if (size < STORAGE_LIMIT) {
             int index = getIndex(r.getUuid());
-            if (index <= -1) {
+            if (index > -1) {
+                throw new ExistStorageException(r.getUuid());
+            } else {
                 insertElement(r, index);
                 size++;
-            } else {
-                throw new ExistStorageException(r.getUuid());
             }
         } else {
             throw new StorageException("Storage overflow", r.getUuid());
@@ -41,10 +40,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     @Override
     public void update(Resume r) {
         int index = getIndex(r.getUuid());
-        if (index <= -1) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
+        if (index > -1) {
             storage[index] = r;
+        } else {
+            throw new NotExistStorageException(r.getUuid());
         }
     }
 
