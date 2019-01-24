@@ -20,7 +20,7 @@ public abstract class AbstractStorage implements Storage {
     public void update(Resume r) {
         int searchKey = getSearchKey(r.getUuid());
         if (searchKey > -1) {
-            doSet(searchKey, r);
+            doSet(r);
         } else {
             throw new NotExistStorageException(r.getUuid());
         }
@@ -30,7 +30,7 @@ public abstract class AbstractStorage implements Storage {
     public Resume get(String uuid) {
         int searchKey = getSearchKey(uuid);
         if (searchKey > -1) {
-            return doGet(searchKey);
+            return doGet(uuid);
         } else {
             throw new NotExistStorageException(uuid);
         }
@@ -40,7 +40,7 @@ public abstract class AbstractStorage implements Storage {
     public void delete(String uuid) {
         int searchKey = getSearchKey(uuid);
         if (searchKey > -1) {
-            doRemove(searchKey);
+            doRemove(uuid);
         } else {
             throw new NotExistStorageException(uuid);
         }
@@ -48,11 +48,11 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void doSave(Resume r);
 
-    protected abstract void doSet(int searchKey, Resume r);
+    protected abstract void doSet(Resume r);
 
-    protected abstract Resume doGet(int searchKey);
+    protected abstract Resume doGet(String uuid);
 
-    protected abstract void doRemove(int searchKey);
+    protected abstract void doRemove(String uuid);
 
     protected abstract int getSearchKey(String uuid);
 }

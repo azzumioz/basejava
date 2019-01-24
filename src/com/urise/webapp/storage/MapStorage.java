@@ -1,7 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.HashMap;
@@ -16,55 +14,18 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume r) {
-        if (!storage.containsKey(r.getUuid())) {
-            storage.put(r.getUuid(), r);
-        } else {
-            throw new ExistStorageException(r.getUuid());
-        }
-    }
-
-    @Override
-    public void update(Resume r) {
-        if (!storage.containsKey(r.getUuid())) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
-            storage.replace(r.getUuid(), r);
-        }
-    }
-
-    @Override
-    public Resume get(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (storage.containsKey(uuid)) {
-            return storage.get(uuid);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-    }
-
-    @Override
-    public void delete(String uuid) {
-        if (storage.containsKey(uuid)) {
-            storage.remove(uuid);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-    }
-
-    @Override
     protected void doSave(Resume r) {
-
+        storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected void doSet(int searchKey, Resume r) {
-
+    protected void doSet(Resume r) {
+        storage.replace(r.getUuid(), r);
     }
 
     @Override
-    protected Resume doGet(int searchKey) {
-        return storage.get(searchKey);
+    protected Resume doGet(String uuid) {
+        return storage.get(uuid);
     }
 
     @Override
@@ -73,8 +34,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doRemove(int searchKey) {
-
+    protected void doRemove(String uuid) {
+        storage.remove(uuid);
     }
 
     @Override

@@ -28,15 +28,20 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void doSet(int searchKey, Resume r) { }
+    protected void doSet(Resume r) {
+    }
 
     @Override
-    protected void doRemove(int searchKey) { }
+    protected void doRemove(String uuid) {
+    }
 
     @Override
-    protected void doSave(Resume r) { }
+    protected void doSave(Resume r) {
+    }
 
     @Override
-    protected Resume doGet(int searchKey) { return null; }
+    protected Resume doGet(String uuid) {
+        return null;
+    }
 
 }
