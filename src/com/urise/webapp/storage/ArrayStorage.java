@@ -27,21 +27,4 @@ public class ArrayStorage extends AbstractArrayStorage {
         storage[index] = storage[size - 1];
     }
 
-    @Override
-    protected void doSet(Resume r) {
-    }
-
-    @Override
-    protected void doRemove(String uuid) {
-    }
-
-    @Override
-    protected void doSave(Resume r) {
-    }
-
-    @Override
-    protected Resume doGet(String uuid) {
-        return null;
-    }
-
 }

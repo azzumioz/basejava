@@ -50,7 +50,7 @@ public class ListStorage extends AbstractStorage {
         Iterator<Resume> iter = storage.iterator();
         for (int i = 0; i < size(); i++) {
             Resume nextResume = iter.next();
-            if (nextResume.equals(searchResume)) {
+            if (nextResume.compareTo(searchResume) == 0) {
                 return i;
             }
         }

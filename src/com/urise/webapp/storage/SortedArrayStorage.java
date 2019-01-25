@@ -24,20 +24,4 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         System.arraycopy(storage, index + 1, storage, index, size - index - 1);
     }
 
-    @Override
-    protected void doSet(Resume r) {
-    }
-
-    @Override
-    protected void doRemove(String uuid) {
-    }
-
-    @Override
-    protected void doSave(Resume r) {
-    }
-
-    @Override
-    protected Resume doGet(String uuid) {
-        return null;
-    }
 }

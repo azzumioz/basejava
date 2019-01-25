@@ -1,7 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
@@ -15,57 +13,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-
     @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
-    }
-
-    @Override
-    public void save(Resume r) {
-        if (size < STORAGE_LIMIT) {
-            int searchKey = getSearchKey(r.getUuid());
-            if (searchKey > -1) {
-                throw new ExistStorageException(r.getUuid());
-            } else {
-                insertElement(r, searchKey);
-                size++;
-            }
-        } else {
-            throw new StorageException("Storage overflow", r.getUuid());
-        }
-    }
-
-    @Override
-    public void update(Resume r) {
-        int searchKey = getSearchKey(r.getUuid());
-        if (searchKey > -1) {
-            storage[searchKey] = r;
-        } else {
-            throw new NotExistStorageException(r.getUuid());
-        }
-    }
-
-    @Override
-    public Resume get(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        return storage[searchKey];
-    }
-
-    @Override
-    public void delete(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey > -1) {
-            fillDeletedElement(searchKey);
-            storage[size - 1] = null;
-            size--;
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
     }
 
     @Override
@@ -76,6 +27,29 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     @Override
     public int size() {
         return size;
+    }
+
+    protected void doSave(Resume r) {
+        if (size < STORAGE_LIMIT) {
+            insertElement(r, getSearchKey(r.getUuid()));
+            size++;
+        } else {
+            throw new StorageException("Storage overflow", r.getUuid());
+        }
+    }
+
+    protected void doSet(Resume r) {
+        storage[getSearchKey(r.getUuid())] = r;
+    }
+
+    protected Resume doGet(String uuid) {
+        return storage[getSearchKey(uuid)];
+    }
+
+    protected void doRemove(String uuid) {
+        fillDeletedElement(getSearchKey(uuid));
+        storage[size - 1] = null;
+        size--;
     }
 
     protected abstract int getSearchKey(String uuid);
