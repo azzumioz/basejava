@@ -46,11 +46,10 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected int getSearchKey(String uuid) {
-        Resume searchResume = new Resume(uuid);
         Iterator<Resume> iterator = storage.iterator();
         for (int i = 0; i < size(); i++) {
             Resume nextResume = iterator.next();
-            if (nextResume.compareTo(searchResume) == 0) {
+            if (nextResume.getUuid().equals(uuid)) {
                 return i;
             }
         }
