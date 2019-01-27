@@ -4,8 +4,6 @@ import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
-import java.util.Iterator;
-
 public abstract class AbstractStorage implements Storage {
 
     @Override
@@ -14,7 +12,7 @@ public abstract class AbstractStorage implements Storage {
         if (searchKey > -1) {
             throw new ExistStorageException(r.getUuid());
         } else {
-            doSave(r);
+            doSave(searchKey,r);
         }
     }
 
@@ -22,7 +20,7 @@ public abstract class AbstractStorage implements Storage {
     public void update(Resume r) {
         int searchKey = getSearchKey(r.getUuid());
         if (searchKey > -1) {
-            doSet(r);
+            doSet(searchKey, r);
         } else {
             throw new NotExistStorageException(r.getUuid());
         }
@@ -32,7 +30,7 @@ public abstract class AbstractStorage implements Storage {
     public Resume get(String uuid) {
         int searchKey = getSearchKey(uuid);
         if (searchKey > -1) {
-            return doGet(uuid);
+            return doGet(searchKey);
         } else {
             throw new NotExistStorageException(uuid);
         }
@@ -42,19 +40,19 @@ public abstract class AbstractStorage implements Storage {
     public void delete(String uuid) {
         int searchKey = getSearchKey(uuid);
         if (searchKey > -1) {
-            doRemove(uuid);
+            doRemove(searchKey);
         } else {
             throw new NotExistStorageException(uuid);
         }
     }
 
-    protected abstract void doSave(Resume r);
+    protected abstract void doSave(int searchKey, Resume r);
 
-    protected abstract void doSet(Resume r);
+    protected abstract void doSet(int searchKey, Resume r);
 
-    protected abstract Resume doGet(String uuid);
+    protected abstract Resume doGet(int searchKey);
 
-    protected abstract void doRemove(String uuid);
+    protected abstract void doRemove(int searchKey);
 
     protected abstract int getSearchKey(String uuid);
 }

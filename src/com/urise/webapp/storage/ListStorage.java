@@ -15,18 +15,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Resume r) {
+    protected void doSave(int searchKey, Resume r) {
         storage.add(r);
     }
 
     @Override
-    protected void doSet(Resume r) {
-        storage.set(getSearchKey(r.getUuid()), r);
+    protected void doSet(int searchKey, Resume r) {
+        storage.set(searchKey, r);
     }
 
     @Override
-    protected Resume doGet(String uuid) {
-        return storage.get(getSearchKey(uuid));
+    protected Resume doGet(int searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doRemove(String uuid) {
-        storage.remove(getSearchKey(uuid));
+    protected void doRemove(int searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
