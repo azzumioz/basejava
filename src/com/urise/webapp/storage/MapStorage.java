@@ -15,55 +15,30 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(int searchKey, Resume r) {
+    protected void doSave(String searchKey, Resume r) {
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected void doSet(int searchKey, Resume r) {
+    protected void doUpdate(String searchKey, Resume r) {
         storage.replace(r.getUuid(), r);
     }
 
     @Override
-    public Resume get(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey > -1) {
-            return doGet(uuid);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
+    protected Resume doGet(String searchKey) {
+        return storage.get(searchKey);
     }
 
-    @Override
-    protected Resume doGet(int searchKey) {
-        return null;
-    }
-
-    private Resume doGet(String uuid) {
-        return storage.get(uuid);
-    }
 
     @Override
     public Resume[] getAll() {
         return storage.values().toArray(new Resume[0]);
     }
 
-    @Override
-    public void delete(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey > -1) {
-            doRemove(uuid);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-    }
 
     @Override
-    protected void doRemove(int searchKey) {
-    }
-
-    private void doRemove(String uuid) {
-        storage.remove(uuid);
+    protected void doRemove(String searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
@@ -72,8 +47,13 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected int getSearchKey(String uuid) {
-        return storage.containsKey(uuid) ? 1 : -1;
+    protected String getSearchKey(String uuid) {
+        return storage.containsKey(uuid) ? uuid : null;
+    }
+
+    @Override
+    protected boolean isFind(String searchKey) {
+        return (searchKey != null);
     }
 
 }

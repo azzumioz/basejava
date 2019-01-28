@@ -30,25 +30,25 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected void doSave(int searchKey, Resume r) {
+    protected void doSave(String searchKey, Resume r) {
         if (size < STORAGE_LIMIT) {
-            insertElement(r, searchKey);
+            insertElement(r, Integer.parseInt(searchKey));
             size++;
         } else {
             throw new StorageException("Storage overflow", r.getUuid());
         }
     }
 
-    protected void doSet(int searchKey, Resume r) {
-        storage[searchKey] = r;
+    protected void doUpdate(String searchKey, Resume r) {
+        storage[Integer.parseInt(searchKey)] = r;
     }
 
-    protected Resume doGet(int searchKey) {
-        return storage[searchKey];
+    protected Resume doGet(String searchKey) {
+        return storage[Integer.parseInt(searchKey)];
     }
 
-    protected void doRemove(int searchKey) {
-        fillDeletedElement(searchKey);
+    protected void doRemove(String searchKey) {
+        fillDeletedElement(Integer.parseInt(searchKey));
         storage[size - 1] = null;
         size--;
     }
@@ -56,4 +56,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void insertElement(Resume r, int index);
 
     protected abstract void fillDeletedElement(int index);
+
+    @Override
+    protected boolean isFind(String searchKey) {
+        return (Integer.parseInt(searchKey) > -1);
+    }
 }

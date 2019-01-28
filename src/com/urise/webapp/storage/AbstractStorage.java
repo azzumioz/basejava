@@ -8,19 +8,19 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        int searchKey = getSearchKey(r.getUuid());
-        if (searchKey > -1) {
+        String searchKey = getSearchKey(r.getUuid());
+        if (isFind(searchKey)) {
             throw new ExistStorageException(r.getUuid());
         } else {
-            doSave(searchKey,r);
+            doSave(searchKey, r);
         }
     }
 
     @Override
     public void update(Resume r) {
-        int searchKey = getSearchKey(r.getUuid());
-        if (searchKey > -1) {
-            doSet(searchKey, r);
+        String searchKey = getSearchKey(r.getUuid());
+        if (isFind(searchKey)) {
+            doUpdate(searchKey, r);
         } else {
             throw new NotExistStorageException(r.getUuid());
         }
@@ -28,8 +28,8 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey > -1) {
+        String searchKey = getSearchKey(uuid);
+        if (isFind(searchKey)) {
             return doGet(searchKey);
         } else {
             throw new NotExistStorageException(uuid);
@@ -38,21 +38,23 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        int searchKey = getSearchKey(uuid);
-        if (searchKey > -1) {
+        String searchKey = getSearchKey(uuid);
+        if (isFind(searchKey)) {
             doRemove(searchKey);
         } else {
             throw new NotExistStorageException(uuid);
         }
     }
 
-    protected abstract void doSave(int searchKey, Resume r);
+    protected abstract void doSave(String searchKey, Resume r);
 
-    protected abstract void doSet(int searchKey, Resume r);
+    protected abstract void doUpdate(String searchKey, Resume r);
 
-    protected abstract Resume doGet(int searchKey);
+    protected abstract Resume doGet(String searchKey);
 
-    protected abstract void doRemove(int searchKey);
+    protected abstract void doRemove(String searchKey);
 
-    protected abstract int getSearchKey(String uuid);
+    protected abstract String getSearchKey(String uuid);
+
+    protected abstract boolean isFind(String searchKey);
 }
