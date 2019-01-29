@@ -8,7 +8,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        String searchKey = getSearchKey(r.getUuid());
+        Object searchKey = getSearchKey(r.getUuid());
         if (isFind(searchKey)) {
             throw new ExistStorageException(r.getUuid());
         } else {
@@ -18,7 +18,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume r) {
-        String searchKey = getSearchKey(r.getUuid());
+        Object searchKey = getSearchKey(r.getUuid());
         if (isFind(searchKey)) {
             doUpdate(searchKey, r);
         } else {
@@ -28,7 +28,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        String searchKey = getSearchKey(uuid);
+        Object searchKey = getSearchKey(uuid);
         if (isFind(searchKey)) {
             return doGet(searchKey);
         } else {
@@ -38,7 +38,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        String searchKey = getSearchKey(uuid);
+        Object searchKey = getSearchKey(uuid);
         if (isFind(searchKey)) {
             doRemove(searchKey);
         } else {
@@ -46,15 +46,15 @@ public abstract class AbstractStorage implements Storage {
         }
     }
 
-    protected abstract void doSave(String searchKey, Resume r);
+    protected abstract void doSave(Object searchKey, Resume r);
 
-    protected abstract void doUpdate(String searchKey, Resume r);
+    protected abstract void doUpdate(Object searchKey, Resume r);
 
-    protected abstract Resume doGet(String searchKey);
+    protected abstract Resume doGet(Object searchKey);
 
-    protected abstract void doRemove(String searchKey);
+    protected abstract void doRemove(Object searchKey);
 
-    protected abstract String getSearchKey(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
-    protected abstract boolean isFind(String searchKey);
+    protected abstract boolean isFind(Object searchKey);
 }
