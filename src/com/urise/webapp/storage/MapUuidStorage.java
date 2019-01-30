@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapStorage extends AbstractStorage {
+public class MapUuidStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
@@ -36,7 +36,7 @@ public class MapStorage extends AbstractStorage {
 
 
     @Override
-    protected void doRemove(Object searchKey) {
+    protected void doDelete(Object searchKey) {
         storage.remove(searchKey);
     }
 
@@ -51,7 +51,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isFind(Object searchKey) {
+    protected boolean isExist(Object searchKey) {
         return storage.containsKey(searchKey);
     }
 

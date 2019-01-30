@@ -1,11 +1,11 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.MapStorage;
+import com.urise.webapp.storage.MapUuidStorage;
 import com.urise.webapp.storage.Storage;
 
 public class MainCollections {
-    static final Storage ARRAY_STORAGE = new MapStorage();
+    static final Storage ARRAY_STORAGE = new MapUuidStorage();
 
     public static void main(String[] args) {
         Resume r1 = new Resume("uuid1");
