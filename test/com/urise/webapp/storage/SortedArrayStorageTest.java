@@ -1,6 +1,6 @@
 package com.urise.webapp.storage;
 
-public class SortedArrayStorageTest extends AbstractStorageTest {
+public class SortedArrayStorageTest extends OverflowArrayStorageTest {
 
     public SortedArrayStorageTest() {
 
