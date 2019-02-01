@@ -4,7 +4,7 @@ import com.urise.webapp.model.Resume;
 
 import java.util.*;
 
-public class MapUuidStorage extends AbstractStorage {
+public class MapFullNameStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
@@ -59,5 +59,6 @@ public class MapUuidStorage extends AbstractStorage {
     protected boolean isExist(Object searchKey) {
         return storage.containsKey(searchKey);
     }
+
 
 }

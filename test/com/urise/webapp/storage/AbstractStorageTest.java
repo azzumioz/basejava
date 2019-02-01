@@ -7,7 +7,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractStorageTest {
     public Storage getStorage() {
@@ -43,6 +46,9 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_1);
         storage.save(RESUME_2);
         storage.save(RESUME_3);
+        RESUME_1.setFullName("Name1");
+        RESUME_2.setFullName("Name2");
+        RESUME_3.setFullName("Name2");
     }
 
     @Test
@@ -119,6 +125,17 @@ public abstract class AbstractStorageTest {
         Arrays.sort(arrayExist);
         Assert.assertEquals(3, arrayExist.length);
         Assert.assertArrayEquals(arrayTemp, arrayExist);
+    }
+
+    @Test
+    public void getAllSorted() {
+        List<Resume> arrayExist = storage.getAllSorted();
+        List<Resume> arrayTemp = new ArrayList<>();
+        arrayTemp.add(RESUME_1);
+        arrayTemp.add(RESUME_2);
+        arrayTemp.add(RESUME_3);
+        Assert.assertEquals(3, arrayExist.size());
+        Assert.assertEquals(arrayExist, arrayTemp);
     }
 
     @Test
