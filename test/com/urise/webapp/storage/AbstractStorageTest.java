@@ -48,7 +48,8 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_3);
         RESUME_1.setFullName("Name1");
         RESUME_2.setFullName("Name2");
-        RESUME_3.setFullName("Name2");
+        RESUME_3.setFullName("Name3");
+        RESUME_3.setFullName("Name4");
     }
 
     @Test
@@ -68,19 +69,6 @@ public abstract class AbstractStorageTest {
     public void saveExist() {
         storage.save(RESUME_1);
     }
-
-//    @Test(expected = StorageException.class)
-//    public void saveOverflow() {
-//        storage.clear();
-//        try {
-//            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-//                storage.save(new Resume());
-//            }
-//        } catch (StorageException e) {
-//            Assert.fail("Error: storage overflow before limit");
-//        }
-//        storage.save(new Resume());
-//    }
 
     @Test
     public void update() {

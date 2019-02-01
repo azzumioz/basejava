@@ -14,12 +14,12 @@ public class MapFullNameStorage extends AbstractStorage {
 
     @Override
     protected void doSave(Object searchKey, Resume r) {
-        storage.put(r.getUuid(), r);
+        storage.put(r.getFullName(), r);
     }
 
     @Override
     protected void doUpdate(Object searchKey, Resume r) {
-        storage.replace(r.getUuid(), r);
+        storage.replace(r.getFullName(), r);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class MapFullNameStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
-        return uuid;
+    protected Object getSearchKey(String fullName) {
+        return fullName;
     }
 
     @Override
