@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
@@ -73,7 +72,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1);
-        RESUME_5.setFullName("123");
+        RESUME_5.setFullName("Name5");
         storage.update(RESUME_5);
         Assert.assertSame(RESUME_5, storage.get(UUID_1));
     }
