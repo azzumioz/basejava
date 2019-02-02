@@ -73,6 +73,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1);
+        RESUME_5.setFullName("123");
         storage.update(RESUME_5);
         Assert.assertSame(RESUME_5, storage.get(UUID_1));
     }
@@ -132,7 +133,11 @@ public abstract class AbstractStorageTest {
     }
 
     private void assertGet(Resume r) {
-        Assert.assertEquals(r, storage.get(r.getUuid()));
+        if (this instanceof MapResumeStorageTest) {
+            Assert.assertEquals(r, storage.get(r.getFullName()));
+        } else {
+            Assert.assertEquals(r, storage.get(r.getUuid()));
+        }
     }
 
     private void assertSize(int size) {

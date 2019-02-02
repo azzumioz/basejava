@@ -4,8 +4,20 @@ import com.urise.webapp.model.Resume;
 
 import java.util.*;
 
-public class MapFullNameStorage extends AbstractStorage {
+public class MapResumeStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
+
+    @Override
+    public void save(Resume r) {
+        Object searchKey = getNotExistedSearchKey(r.getFullName());
+        doSave(searchKey, r);
+    }
+
+    @Override
+    public void update(Resume r) {
+        Object searchKey = getExistedSearchKey(r.getFullName());
+        doUpdate(searchKey, r);
+    }
 
     @Override
     public void clear() {

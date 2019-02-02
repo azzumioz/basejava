@@ -3,11 +3,10 @@ package com.urise.webapp;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainCollections {
-    static final Storage ARRAY_STORAGE = new MapFullNameStorage();
+    static final Storage ARRAY_STORAGE = new MapResumeStorage();
 
     public static void main(String[] args) {
         Resume r1 = new Resume("uuid1");
