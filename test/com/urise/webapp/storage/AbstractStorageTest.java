@@ -8,20 +8,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
-    public Storage getStorage() {
-        return storage;
-    }
 
-    private Storage storage;
+    protected Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
+
+    private static final String NAME_1 = "Name1";
+    private static final String NAME_2 = "Name2";
+    private static final String NAME_3 = "Name3";
+    private static final String NAME_4 = "Name4";
 
     private static final Resume RESUME_1;
     private static final Resume RESUME_2;
@@ -29,10 +30,10 @@ public abstract class AbstractStorageTest {
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1);
-        RESUME_2 = new Resume(UUID_2);
-        RESUME_3 = new Resume(UUID_3);
-        RESUME_4 = new Resume(UUID_4);
+        RESUME_1 = new Resume(UUID_1, NAME_1);
+        RESUME_2 = new Resume(UUID_2, NAME_2);
+        RESUME_3 = new Resume(UUID_3, NAME_3);
+        RESUME_4 = new Resume(UUID_4, NAME_4);
     }
 
     protected AbstractStorageTest(Storage storage) {
@@ -45,10 +46,6 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_1);
         storage.save(RESUME_2);
         storage.save(RESUME_3);
-        RESUME_1.setFullName("Name1");
-        RESUME_2.setFullName("Name2");
-        RESUME_3.setFullName("Name3");
-        RESUME_3.setFullName("Name4");
     }
 
     @Test
@@ -71,10 +68,13 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume RESUME_5 = new Resume(UUID_1);
-        RESUME_5.setFullName("Name5");
+        Resume RESUME_5 = new Resume(UUID_1, "Name1");
         storage.update(RESUME_5);
-        Assert.assertSame(RESUME_5, storage.get(UUID_1));
+        if (this instanceof MapResumeStorageTest) {
+            Assert.assertSame(RESUME_5, storage.get("Name1"));
+        } else {
+            Assert.assertTrue(RESUME_5 == storage.get(UUID_1));
+        }
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -107,15 +107,6 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAll() {
-        Resume[] arrayExist = storage.getAll();
-        Resume[] arrayTemp = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
-        Arrays.sort(arrayExist);
-        Assert.assertEquals(3, arrayExist.length);
-        Assert.assertArrayEquals(arrayTemp, arrayExist);
-    }
-
-    @Test
     public void getAllSorted() {
         List<Resume> arrayExist = storage.getAllSorted();
         List<Resume> arrayTemp = new ArrayList<>();
@@ -131,11 +122,11 @@ public abstract class AbstractStorageTest {
         assertSize(3);
     }
 
-    private void assertGet(Resume r) {
+    private void assertGet(Resume resume) {
         if (this instanceof MapResumeStorageTest) {
-            Assert.assertEquals(r, storage.get(r.getFullName()));
+            Assert.assertEquals(resume, storage.get(resume.getFullName()));
         } else {
-            Assert.assertEquals(r, storage.get(r.getUuid()));
+            Assert.assertEquals(resume, storage.get(resume.getUuid()));
         }
     }
 

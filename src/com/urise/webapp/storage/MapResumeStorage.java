@@ -1,5 +1,7 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.ExistStorageException;
+import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.*;
@@ -7,16 +9,32 @@ import java.util.*;
 public class MapResumeStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
 
-    @Override
-    public void save(Resume r) {
-        Object searchKey = getNotExistedSearchKey(r.getFullName());
-        doSave(searchKey, r);
+    private Object getNotExistedSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExist(searchKey)) {
+            throw new ExistStorageException(uuid);
+        }
+        return searchKey;
+    }
+
+    private Object getExistedSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
+            throw new NotExistStorageException(uuid);
+        }
+        return searchKey;
     }
 
     @Override
-    public void update(Resume r) {
-        Object searchKey = getExistedSearchKey(r.getFullName());
-        doUpdate(searchKey, r);
+    public void save(Resume resume) {
+        Object searchKey = getNotExistedSearchKey(resume.getFullName());
+        doSave(searchKey, resume);
+    }
+
+    @Override
+    public void update(Resume resume) {
+        Object searchKey = getExistedSearchKey(resume.getFullName());
+        doUpdate(searchKey, resume);
     }
 
     @Override
@@ -25,24 +43,18 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Object searchKey, Resume r) {
-        storage.put(r.getFullName(), r);
+    protected void doSave(Object searchKey, Resume resume) {
+        storage.put(resume.getFullName(), resume);
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume r) {
-        storage.replace(r.getFullName(), r);
+    protected void doUpdate(Object searchKey, Resume resume) {
+        storage.replace(resume.getFullName(), resume);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
         return storage.get(searchKey);
-    }
-
-
-    @Override
-    public Resume[] getAll() {
-        return storage.values().toArray(new Resume[0]);
     }
 
     @Override
@@ -69,7 +81,6 @@ public class MapResumeStorage extends AbstractStorage {
 
     @Override
     protected boolean isExist(Object searchKey) {
-        boolean temp = storage.containsKey(searchKey);
         return storage.containsKey(searchKey);
     }
 

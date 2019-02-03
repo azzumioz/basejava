@@ -13,45 +13,17 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-    @Override
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
-
-    @Override
-    public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
-    }
-
-    @Override
-    public List<Resume> getAllSorted() {
-        ArrayList<Resume> sortedList = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            sortedList.add(storage[i]);
-        }
-        if (this instanceof ArrayStorage) {
-            sortedList.sort(RESUME_COMPARATOR_FULL_NAME);
-        }
-        return sortedList;
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
-    protected void doSave(Object searchKey, Resume r) {
+    protected void doSave(Object searchKey, Resume resume) {
         if (size < STORAGE_LIMIT) {
-            insertElement(r, (Integer) searchKey);
+            insertElement(resume, (Integer) searchKey);
             size++;
         } else {
-            throw new StorageException("Storage overflow", r.getUuid());
+            throw new StorageException("Storage overflow", resume.getUuid());
         }
     }
 
-    protected void doUpdate(Object searchKey, Resume r) {
-        storage[(Integer) searchKey] = r;
+    protected void doUpdate(Object searchKey, Resume resume) {
+        storage[(Integer) searchKey] = resume;
     }
 
     protected Resume doGet(Object searchKey) {
@@ -64,9 +36,31 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
-    protected abstract void insertElement(Resume r, int index);
+    protected abstract void insertElement(Resume resume, int index);
 
     protected abstract void fillDeletedElement(int index);
+
+    @Override
+    public void clear() {
+        Arrays.fill(storage, 0, size, null);
+        size = 0;
+    }
+
+    @Override
+    public List<Resume> getAllSorted() {
+        ArrayList<Resume> sortedList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            sortedList.add(storage[i]);
+        }
+        return doSort(sortedList);
+    }
+
+    protected abstract List <Resume> doSort(List<Resume> list);
+
+    @Override
+    public int size() {
+        return size;
+    }
 
     @Override
     protected boolean isExist(Object searchKey) {
