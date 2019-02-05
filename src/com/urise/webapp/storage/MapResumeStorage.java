@@ -17,17 +17,17 @@ public class MapResumeStorage extends AbstractStorage {
 
     @Override
     protected void doSave(Object searchKey, Resume resume) {
-        storage.put(resume.getFullName(), resume);
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
     protected void doUpdate(Object searchKey, Resume resume) {
-        storage.replace(resume.getFullName(), resume);
+        storage.replace(resume.getUuid(), resume);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return storage.get(searchKey);
+        return (Resume) searchKey;
     }
 
     @Override
@@ -39,7 +39,8 @@ public class MapResumeStorage extends AbstractStorage {
 
     @Override
     protected void doDelete(Object searchKey) {
-        storage.remove(searchKey);
+        Resume res = (Resume) searchKey;
+        storage.remove(res.getUuid());
     }
 
     @Override
@@ -48,13 +49,13 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getSearchKey(String fullName) {
-        return fullName;
+    protected Object getSearchKey(String uuid) {
+        return storage.get(uuid);
     }
 
     @Override
     protected boolean isExist(Object searchKey) {
-        return storage.containsKey(searchKey);
+        return storage.containsValue(searchKey);
     }
 
 

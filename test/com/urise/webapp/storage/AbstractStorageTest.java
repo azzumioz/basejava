@@ -35,8 +35,6 @@ public abstract class AbstractStorageTest {
         this.storage = storage;
     }
 
-    protected abstract void doTestUpdate(Resume resume, String uuid);
-
     @Before
     public void setUp() {
         storage.clear();
@@ -67,7 +65,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1, "Name1");
         storage.update(RESUME_5);
-        doTestUpdate(RESUME_5, UUID_1);
+        Assert.assertSame(RESUME_5, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -116,11 +114,7 @@ public abstract class AbstractStorageTest {
     }
 
     private void assertGet(Resume resume) {
-        if (this instanceof MapResumeStorageTest) {
-            Assert.assertEquals(resume, storage.get(resume.getFullName()));
-        } else {
-            Assert.assertEquals(resume, storage.get(resume.getUuid()));
-        }
+        Assert.assertEquals(resume, storage.get(resume.getUuid()));
     }
 
     private void assertSize(int size) {
