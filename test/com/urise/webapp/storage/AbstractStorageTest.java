@@ -19,26 +19,23 @@ public abstract class AbstractStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
-    private static final String NAME_1 = "Name1";
-    private static final String NAME_2 = "Name2";
-    private static final String NAME_3 = "Name3";
-    private static final String NAME_4 = "Name4";
-
     private static final Resume RESUME_1;
     private static final Resume RESUME_2;
     private static final Resume RESUME_3;
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1, NAME_1);
-        RESUME_2 = new Resume(UUID_2, NAME_2);
-        RESUME_3 = new Resume(UUID_3, NAME_3);
-        RESUME_4 = new Resume(UUID_4, NAME_4);
+        RESUME_1 = new Resume(UUID_1, "Name1");
+        RESUME_2 = new Resume(UUID_2, "Name2");
+        RESUME_3 = new Resume(UUID_3, "Name3");
+        RESUME_4 = new Resume(UUID_4, "Name4");
     }
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
+
+    protected abstract void doTestUpdate(Resume resume, String uuid);
 
     @Before
     public void setUp() {
@@ -70,11 +67,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1, "Name1");
         storage.update(RESUME_5);
-        if (this instanceof MapResumeStorageTest) {
-            Assert.assertSame(RESUME_5, storage.get("Name1"));
-        } else {
-            Assert.assertTrue(RESUME_5 == storage.get(UUID_1));
-        }
+        doTestUpdate(RESUME_5, UUID_1);
     }
 
     @Test(expected = NotExistStorageException.class)

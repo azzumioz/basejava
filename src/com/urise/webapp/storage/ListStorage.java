@@ -28,6 +28,11 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    protected List<Resume> doSort(List<Resume> list) {
+        return null;
+    }
+
+    @Override
     public List<Resume> getAllSorted() {
         List<Resume> sortedList = new ArrayList<>(list);
         sortedList.sort(RESUME_COMPARATOR_FULL_NAME);

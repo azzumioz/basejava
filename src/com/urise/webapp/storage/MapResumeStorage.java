@@ -1,41 +1,14 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MapResumeStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
-
-    private Object getNotExistedSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (isExist(searchKey)) {
-            throw new ExistStorageException(uuid);
-        }
-        return searchKey;
-    }
-
-    private Object getExistedSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (!isExist(searchKey)) {
-            throw new NotExistStorageException(uuid);
-        }
-        return searchKey;
-    }
-
-    @Override
-    public void save(Resume resume) {
-        Object searchKey = getNotExistedSearchKey(resume.getFullName());
-        doSave(searchKey, resume);
-    }
-
-    @Override
-    public void update(Resume resume) {
-        Object searchKey = getExistedSearchKey(resume.getFullName());
-        doUpdate(searchKey, resume);
-    }
 
     @Override
     public void clear() {
@@ -58,9 +31,9 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    protected List<Resume> doSort(List<Resume> list) {
         List<Resume> sortedList = new ArrayList(storage.values());
-        Collections.sort(sortedList, RESUME_COMPARATOR_FULL_NAME);
+        sortedList.sort(RESUME_COMPARATOR_FULL_NAME);
         return sortedList;
     }
 
