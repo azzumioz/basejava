@@ -31,10 +31,8 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    protected List<Resume> doSort(List<Resume> list) {
-        List<Resume> sortedList = new ArrayList(storage.values());
-        sortedList.sort(RESUME_COMPARATOR_FULL_NAME);
-        return sortedList;
+    protected List<Resume> goGetAll(List<Resume> list) {
+        return new ArrayList(storage.values());
     }
 
     @Override

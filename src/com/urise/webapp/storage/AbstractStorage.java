@@ -18,7 +18,7 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract Resume doGet(Object searchKey);
 
-    protected abstract List<Resume> doSort(List<Resume> list);
+    protected abstract List<Resume> goGetAll(List<Resume> list);
 
     protected abstract void doDelete(Object searchKey);
 
@@ -45,9 +45,16 @@ public abstract class AbstractStorage implements Storage {
     }
 
     @Override
+    public List<Resume> getAll() {
+        List<Resume> list = new ArrayList<>();
+        return goGetAll(list);
+    }
+
+    @Override
     public List<Resume> getAllSorted() {
-        ArrayList<Resume> sortedList = new ArrayList<>();
-        return doSort(sortedList);
+        List<Resume> sortedList = getAll();
+        sortedList.sort(RESUME_COMPARATOR_FULL_NAME);
+        return sortedList;
     }
 
     @Override

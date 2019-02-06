@@ -7,6 +7,14 @@ import java.util.List;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
+    protected List<Resume> goGetAll(List<Resume> list) {
+        for (int i = 0; i < size; i++) {
+            list.add(storage[i]);
+        }
+        return list;
+    }
+
+    @Override
     protected Object getSearchKey(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
@@ -24,15 +32,6 @@ public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected void fillDeletedElement(int index) {
         storage[index] = storage[size - 1];
-    }
-
-    @Override
-    protected List<Resume> doSort(List<Resume> list) {
-        for (int i = 0; i < size; i++) {
-            list.add(storage[i]);
-        }
-        list.sort(RESUME_COMPARATOR_FULL_NAME);
-        return list;
     }
 
 }
