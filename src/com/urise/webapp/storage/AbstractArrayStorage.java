@@ -42,7 +42,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     @Override
     protected List<Resume> getAll() {
-        List<Resume> list = new ArrayList<>(Arrays.asList(storage));
+        List<Resume> list = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(storage, 0, size)));
         return list;
     }
 
