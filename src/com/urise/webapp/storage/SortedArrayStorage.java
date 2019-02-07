@@ -9,7 +9,8 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     protected static final Comparator<Resume> RESUME_COMPARATOR_UUID = Comparator.comparing(Resume::getUuid);
 
     @Override
-    protected List<Resume> goGetAll(List<Resume> list) {
+    protected List<Resume> getAll() {
+        List<Resume> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             list.add(storage[i]);
         }

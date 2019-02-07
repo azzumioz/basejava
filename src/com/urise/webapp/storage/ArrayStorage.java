@@ -2,12 +2,14 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected List<Resume> goGetAll(List<Resume> list) {
+    protected List<Resume> getAll() {
+        List<Resume> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             list.add(storage[i]);
         }
