@@ -33,13 +33,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> sortedList = new ArrayList<>(list);
-        sortedList.sort(RESUME_COMPARATOR_FULL_NAME);
-        return sortedList;
-    }
-
-    @Override
     protected void doDelete(Object searchKey) {
         list.remove((int) searchKey);
     }
