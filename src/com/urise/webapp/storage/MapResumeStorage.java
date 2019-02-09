@@ -7,53 +7,52 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapResumeStorage extends AbstractStorage {
-    protected Map<String, Resume> storage = new HashMap<>();
+public class MapResumeStorage extends AbstractStorage<Resume> {
+    protected Map<String, Resume> map = new HashMap<>();
 
     @Override
     public void clear() {
-        storage.clear();
+        map.clear();
     }
 
     @Override
-    protected void doSave(Object searchKey, Resume resume) {
-        storage.put(resume.getUuid(), resume);
+    protected void doSave(Resume resumeAsKey, Resume resume) {
+        map.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume resume) {
-        storage.replace(resume.getUuid(), resume);
+    protected void doUpdate(Resume resumeAsKey, Resume resume) {
+        map.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return (Resume) searchKey;
+    protected Resume doGet(Resume resumeAsKey) {
+        return resumeAsKey;
     }
 
     @Override
-    protected List<Resume> getAll() {
-        return new ArrayList<>(storage.values());
+    protected List<Resume> doCopyAll() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        Resume res = (Resume) searchKey;
-        storage.remove(res.getUuid());
+    protected void doDelete(Resume resumeAsKey) {
+        map.remove((resumeAsKey).getUuid());
     }
 
     @Override
     public int size() {
-        return storage.size();
+        return map.size();
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
-        return storage.get(uuid);
+    protected Resume getSearchKey(String uuid) {
+        return map.get(uuid);
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return storage.containsValue(searchKey);
+    protected boolean isExist(Resume resumeAsKey) {
+        return resumeAsKey != null;
     }
 
 

@@ -7,19 +7,20 @@ import org.junit.Test;
 
 public class AbstractArrayStorageTest extends AbstractStorageTest {
 
-    protected AbstractArrayStorageTest(Storage storage) {
+    AbstractArrayStorageTest(Storage storage) {
         super(storage);
     }
+
     @Test(expected = StorageException.class)
     public void saveOverflow() {
         storage.clear();
         try {
             for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume("Name1"));
+                storage.save(new Resume("Name" + i));
             }
         } catch (StorageException e) {
             Assert.fail("Error: storage overflow before limit");
         }
-        storage.save(new Resume("Name1"));
+        storage.save(new Resume("Overflow"));
     }
 }

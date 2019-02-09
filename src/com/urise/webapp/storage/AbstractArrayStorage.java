@@ -6,13 +6,13 @@ import com.urise.webapp.model.Resume;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected static final int STORAGE_LIMIT = 10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-    protected void doSave(Object searchKey, Resume resume) {
+    protected void doSave(Integer searchKey, Resume resume) {
         if (size < STORAGE_LIMIT) {
             insertElement(resume, (Integer) searchKey);
             size++;
@@ -21,16 +21,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    protected void doUpdate(Object searchKey, Resume resume) {
-        storage[(Integer) searchKey] = resume;
+    protected void doUpdate(Integer searchKey, Resume resume) {
+        storage[searchKey] = resume;
     }
 
-    protected Resume doGet(Object searchKey) {
-        return storage[(Integer) searchKey];
+    protected Resume doGet(Integer searchKey) {
+        return storage[searchKey];
     }
 
-    protected void doDelete(Object searchKey) {
-        fillDeletedElement((Integer) searchKey);
+    protected void doDelete(Integer searchKey) {
+        fillDeletedElement(searchKey);
         storage[size - 1] = null;
         size--;
     }
@@ -40,7 +40,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void fillDeletedElement(int index);
 
     @Override
-    protected List<Resume> getAll() {
+    protected List<Resume> doCopyAll() {
         return Arrays.asList(Arrays.copyOf(storage, size));
     }
 
@@ -56,8 +56,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return ((Integer) searchKey > -1);
+    protected boolean isExist(Integer searchKey) {
+        return (searchKey > -1);
     }
 
 }
