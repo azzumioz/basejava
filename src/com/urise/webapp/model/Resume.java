@@ -12,6 +12,25 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
 
+    private Contacts contacts;
+    private Sections sections;
+
+    public Contacts getContacts() {
+        return contacts;
+    }
+
+    public Sections getSections() {
+        return sections;
+    }
+
+    public void setContacts(Contacts contacts) {
+        this.contacts = contacts;
+    }
+
+    public void setSections(Sections sections) {
+        this.sections = sections;
+    }
+
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
     }
