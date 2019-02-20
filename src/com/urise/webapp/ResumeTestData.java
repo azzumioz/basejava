@@ -26,7 +26,7 @@ public class ResumeTestData {
         Section objective = new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         section.set(SectionType.OBJECTIVE,objective);
 
-        Section personal = new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        Section personal = new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         section.set(SectionType.PERSONAL,personal);
 
         List<String> listAchievement = new ArrayList<>();
