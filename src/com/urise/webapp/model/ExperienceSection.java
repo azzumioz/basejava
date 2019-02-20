@@ -8,6 +8,10 @@ import java.util.List;
 public class ExperienceSection extends Section {
     private List<Experience> list = new ArrayList<>();
 
+    public ExperienceSection(List<Experience> list) {
+        this.list = list;
+    }
+
     public List<Experience> get() {
         return list;
     }
@@ -16,7 +20,7 @@ public class ExperienceSection extends Section {
         this.list.add(new Experience(name, link, position, description, fromDate, toDate));
     }
 
-    private class Experience {
+    public static class Experience {
         private String name;
         private String link;
         private String position;

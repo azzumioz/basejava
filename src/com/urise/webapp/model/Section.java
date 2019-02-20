@@ -3,9 +3,9 @@ package com.urise.webapp.model;
 import java.util.EnumMap;
 
 public class Section {
-    private EnumMap<SectionType, Object> enumMap = new EnumMap<>(SectionType.class);
+    private EnumMap<SectionType, Section> enumMap = new EnumMap<>(SectionType.class);
 
-    public void set(SectionType sectionType, Object object) {
+    public void set(SectionType sectionType, Section object) {
         enumMap.put(sectionType, object);
     }
 
