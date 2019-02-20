@@ -2,11 +2,10 @@ package com.urise.webapp.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExperienceSection extends Section {
-    private List<Experience> list = new ArrayList<>();
+    private List<Experience> list;
 
     public ExperienceSection(List<Experience> list) {
         this.list = list;
@@ -14,10 +13,6 @@ public class ExperienceSection extends Section {
 
     public List<Experience> get() {
         return list;
-    }
-
-    public void set(String name, String link, String position, String description, LocalDate fromDate, LocalDate toDate) {
-        this.list.add(new Experience(name, link, position, description, fromDate, toDate));
     }
 
     public static class Experience {
