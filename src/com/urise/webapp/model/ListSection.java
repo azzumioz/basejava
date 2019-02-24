@@ -1,43 +1,40 @@
 package com.urise.webapp.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ListSection extends Section {
-    private List<String> list;
+    private final List<String> items;
 
-    public ListSection(List<String> list) {
-        this.list = list;
+    public ListSection(List<String> items) {
+        Objects.requireNonNull(items, "items must not be null");
+        this.items = items;
     }
 
-    public void set(List<String> list) {
-        this.list = list;
-    }
-
-    public List<String> get() {
-        return list;
+    public List<String> getItems() {
+        return items;
     }
 
     @Override
     public String toString() {
-        String result = "";
-        for (int i = 0; i < list.size(); i++) {
-            result += list.get(i) + "\n";
-        }
-        return result;
+        return items.toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         ListSection that = (ListSection) o;
 
-        return list.equals(that.list);
+        return items.equals(that.items);
     }
 
     @Override
     public int hashCode() {
-        return list.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + items.hashCode();
+        return result;
     }
 }

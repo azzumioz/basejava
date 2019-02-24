@@ -1,23 +1,22 @@
 package com.urise.webapp.model;
 
+import java.util.Objects;
+
 public class TextSection extends Section {
-    private String parameter;
+    private final String content;
 
-    public TextSection(String parameter) {
-        this.parameter = parameter;
+    public TextSection(String content) {
+        Objects.requireNonNull(content, "content must not be null");
+        this.content = content;
     }
 
-    public void set(String parameter) {
-        this.parameter = parameter;
-    }
-
-    public String get() {
-        return parameter;
+    public String getContent() {
+        return content;
     }
 
     @Override
     public String toString() {
-        return get() + "\n";
+        return content;
     }
 
     @Override
@@ -28,13 +27,11 @@ public class TextSection extends Section {
 
         TextSection that = (TextSection) o;
 
-        return parameter.equals(that.parameter);
+        return content.equals(that.content);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + parameter.hashCode();
-        return result;
+        return content.hashCode();
     }
 }
