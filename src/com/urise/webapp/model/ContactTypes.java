@@ -2,7 +2,7 @@ package com.urise.webapp.model;
 
 public enum ContactTypes {
     PHONE("Тел."),
-    MOBIKE("Мобильный"),
+    MOBILE("Мобильный"),
     HOME_PHONE("Домашний тел."),
     SKYPE("Skype"),
     EMAIL("Почта"),

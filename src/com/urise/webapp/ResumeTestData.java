@@ -3,7 +3,6 @@ package com.urise.webapp;
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.DateUtil;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +36,22 @@ public class ResumeTestData {
         r1.setSections(SectionType.QUALIFICATIONS, new ListSection(listQualifications));
 
         List<Organization> listExperience = new ArrayList<>();
-        listExperience.add(new Organization("Java Online Projects", "http://javaops.ru/", DateUtil.of(2013, Month.OCTOBER), LocalDate.now(), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
-        listExperience.add(new Organization("Wrike", "https://www.wrike.com/", DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."));
-        listExperience.add(new Organization("RIT Center", null, DateUtil.of(2012, Month.APRIL), DateUtil.of(2014, Month.OCTOBER), "Java архитектор", "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python"));
+        Organization organization1 = new Organization("Java Online Projects", "http://javaops.ru/");
+        organization1.addOrganizationDetail(new OrganizationDetail(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        listExperience.add(organization1);
+        Organization organization2 = new Organization("Wrike", "https://www.wrike.com/");
+        organization2.addOrganizationDetail(new OrganizationDetail(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."));
+        listExperience.add(organization2);
         r1.setSections(SectionType.EXPERIENCE, new OrganizationSection(listExperience));
 
         List<Organization> listEducation = new ArrayList<>();
-        listEducation.add(new Organization("Coursera", "https://www.coursera.org/course/progfun", DateUtil.of(2012, Month.APRIL), DateUtil.of(2014, Month.OCTOBER), "\"Functional Programming Principles in Scala\" by Martin Odersky", null));
-        listEducation.add(new Organization("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366", DateUtil.of(2012, Month.APRIL), DateUtil.of(2014, Month.OCTOBER), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", null));
-        listEducation.add(new Organization("Siemens AG", "http://www.siemens.ru/", DateUtil.of(2012, Month.APRIL), DateUtil.of(2014, Month.OCTOBER), "3 месяца обучения мобильным IN сетям (Берлин)", null));
+        Organization organization3 = new Organization("Coursera", "https://www.coursera.org/course/progfun");
+        organization3.addOrganizationDetail(new OrganizationDetail(DateUtil.of(2013, Month.MARCH), DateUtil.of(2013, Month.MAY), "\"Functional Programming Principles in Scala\" by Martin Odersky", null));
+        listEducation.add(organization3);
+        Organization organization4 = new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/");
+        organization4.addOrganizationDetail(new OrganizationDetail(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY), "Аспирантура (программист С, С++)", null));
+        organization4.addOrganizationDetail(new OrganizationDetail(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY), "Инженер (программист Fortran, C)", null));
+        listEducation.add(organization4);
         r1.setSections(SectionType.EDUCATION, new OrganizationSection(listEducation));
 
         System.out.println(r1.getFullName());
