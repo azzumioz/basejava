@@ -8,11 +8,9 @@ public class Organization {
 
     private List<OrganizationDetail> listOrganizationDetail;
     private final Link homePage;
-    private final String name;
 
     public Organization(String name, String url) {
         Objects.requireNonNull(name, "name must not be null");
-        this.name = name;
         this.homePage = new Link(name, url);
     }
 
@@ -27,7 +25,6 @@ public class Organization {
     public String toString() {
         return "Organization{" +
                 " homePage=" + homePage +
-                ", name='" + name + '\'' +
                 ", listOrganizationDetail=" + listOrganizationDetail +
                 '}' + "\n";
     }
@@ -40,15 +37,13 @@ public class Organization {
         Organization that = (Organization) o;
 
         if (!listOrganizationDetail.equals(that.listOrganizationDetail)) return false;
-        if (homePage != null ? !homePage.equals(that.homePage) : that.homePage != null) return false;
-        return name.equals(that.name);
+        return homePage.equals(that.homePage);
     }
 
     @Override
     public int hashCode() {
         int result = listOrganizationDetail.hashCode();
-        result = 31 * result + (homePage != null ? homePage.hashCode() : 0);
-        result = 31 * result + name.hashCode();
+        result = 31 * result + homePage.hashCode();
         return result;
     }
 }

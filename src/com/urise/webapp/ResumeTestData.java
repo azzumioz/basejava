@@ -20,20 +20,20 @@ public class ResumeTestData {
         r1.setContacts(ContactTypes.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
         r1.setContacts(ContactTypes.HOME_PAGE, "http://gkislin.ru/");
 
-        r1.setSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
-        r1.setSections(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
+        r1.setSections(SectionType.OBJECTIVE, new TextAbstractSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+        r1.setSections(SectionType.PERSONAL, new TextAbstractSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
         List<String> listAchievement = new ArrayList<>();
         listAchievement.add("С 2013 года: разработка проектов \\\"Разработка Web приложения\\\",\\\"Java Enterprise\\\", \\\"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\\\". Организация онлайн стажировок и ведение проектов. Более 1000 выпускников.");
         listAchievement.add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
         listAchievement.add("Налаживание процесса разработки и непрерывной интеграции ERP системы River BPM. Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, интеграция CIFS/SMB java сервера.");
-        r1.setSections(SectionType.ACHIEVEMENT, new ListSection(listAchievement));
+        r1.setSections(SectionType.ACHIEVEMENT, new ListAbstractSection(listAchievement));
 
         List<String> listQualifications = new ArrayList<>();
         listQualifications.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
         listQualifications.add("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         listQualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
-        r1.setSections(SectionType.QUALIFICATIONS, new ListSection(listQualifications));
+        r1.setSections(SectionType.QUALIFICATIONS, new ListAbstractSection(listQualifications));
 
         List<Organization> listExperience = new ArrayList<>();
         Organization organization1 = new Organization("Java Online Projects", "http://javaops.ru/");
@@ -42,7 +42,7 @@ public class ResumeTestData {
         Organization organization2 = new Organization("Wrike", "https://www.wrike.com/");
         organization2.addOrganizationDetail(new OrganizationDetail(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."));
         listExperience.add(organization2);
-        r1.setSections(SectionType.EXPERIENCE, new OrganizationSection(listExperience));
+        r1.setSections(SectionType.EXPERIENCE, new OrganizationAbstractSection(listExperience));
 
         List<Organization> listEducation = new ArrayList<>();
         Organization organization3 = new Organization("Coursera", "https://www.coursera.org/course/progfun");
@@ -52,7 +52,7 @@ public class ResumeTestData {
         organization4.addOrganizationDetail(new OrganizationDetail(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY), "Аспирантура (программист С, С++)", null));
         organization4.addOrganizationDetail(new OrganizationDetail(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY), "Инженер (программист Fortran, C)", null));
         listEducation.add(organization4);
-        r1.setSections(SectionType.EDUCATION, new OrganizationSection(listEducation));
+        r1.setSections(SectionType.EDUCATION, new OrganizationAbstractSection(listEducation));
 
         System.out.println(r1.getFullName());
         for (ContactTypes type : ContactTypes.values()) {

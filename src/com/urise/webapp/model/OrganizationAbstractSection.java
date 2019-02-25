@@ -3,10 +3,10 @@ package com.urise.webapp.model;
 import java.util.List;
 import java.util.Objects;
 
-public class OrganizationSection extends Section {
+public class OrganizationAbstractSection extends AbstractSection {
     private final List<Organization> organizations;
 
-    public OrganizationSection(List<Organization> organizations) {
+    public OrganizationAbstractSection(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "organizations must not be null");
         this.organizations = organizations;
     }
@@ -25,7 +25,7 @@ public class OrganizationSection extends Section {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrganizationSection that = (OrganizationSection) o;
+        OrganizationAbstractSection that = (OrganizationAbstractSection) o;
 
         return organizations.equals(that.organizations);
     }
