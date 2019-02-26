@@ -2,17 +2,16 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
     private File directory;
-    private static final String dirStorage = "c:/users/work/basejava/storage";
     private List<File> files = new ArrayList<>();
 
     protected AbstractFileStorage(File directory) {
@@ -66,7 +65,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> doCopyAll() {
         List<Resume> listResume = new ArrayList<>();
-        FileUtil.getListFiles(files, new File(dirStorage));
+        files = Arrays.asList(directory.listFiles());
         for (File file : files) {
             listResume.add(doGet(file));
         }
@@ -87,7 +86,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        FileUtil.getListFiles(files, new File(dirStorage));
+        files = Arrays.asList(directory.listFiles());
         for (File file : files) {
             doDelete(file);
         }
@@ -95,6 +94,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        return FileUtil.getListFiles(files, new File(dirStorage)).size();
+        return directory.list().length;
     }
 }
