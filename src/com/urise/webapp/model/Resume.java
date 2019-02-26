@@ -36,7 +36,7 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public void setContacts(ContactTypes type, String content) {
+    public void addContacts(ContactTypes type, String content) {
         contacts.put(type, content);
     }
 
@@ -44,7 +44,7 @@ public class Resume implements Comparable<Resume> {
         return contacts.get(type);
     }
 
-    public void setSections(SectionType type, AbstractSection abstractSection) {
+    public void addSections(SectionType type, AbstractSection abstractSection) {
         sections.put(type, abstractSection);
     }
 

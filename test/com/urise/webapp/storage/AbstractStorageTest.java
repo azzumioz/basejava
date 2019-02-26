@@ -2,11 +2,12 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +30,30 @@ public abstract class AbstractStorageTest {
         RESUME_2 = new Resume(UUID_2, "Name2");
         RESUME_3 = new Resume(UUID_3, "Name3");
         RESUME_4 = new Resume(UUID_4, "Name4");
+
+        RESUME_1.addContacts(ContactTypes.EMAIL, "ee@mail.ru");
+        RESUME_1.addContacts(ContactTypes.PHONE, "88001223535");
+        RESUME_1.addSections(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        RESUME_1.addSections(SectionType.PERSONAL, new TextSection("Personal"));
+        RESUME_1.addSections(SectionType.ACHIEVEMENT, new ListSection("Achievement1", "Achievement2", "Achievement3"));
+        RESUME_1.addSections(SectionType.QUALIFICATIONS, new ListSection("Java", "SQL", "JS"));
+        RESUME_1.addSections(SectionType.EXPERIENCE,
+                new OrganizationSection(
+                        new Organization("Org1", "hhtp://org1.com",
+                                new Organization.Position(2002, Month.OCTOBER, "position1", "content1"),
+                                new Organization.Position(2003, Month.SEPTEMBER, 2004, Month.OCTOBER,"position2", "content2"))));
+        RESUME_1.addSections(SectionType.EDUCATION,
+                new OrganizationSection(
+                        new Organization("Edu1", "hhtp://edu1.com",
+                                new Organization.Position(2004, Month.OCTOBER,  2005, Month.OCTOBER,"position1", null),
+                                new Organization.Position(2005, Month.SEPTEMBER,  2006, Month.OCTOBER,"position2", "content2")),
+                        new Organization("Edu2", "http://edu2.com")));
+        RESUME_2.addContacts(ContactTypes.SKYPE, "skype1");
+        RESUME_2.addContacts(ContactTypes.PHONE, "1222232");
+        RESUME_2.addSections(SectionType.EXPERIENCE,
+                new OrganizationSection(
+                        new Organization("Org2", "hhtp://org2.com",
+                                new Organization.Position(2011, Month.SEPTEMBER, "position2", "content2"))));
     }
 
     protected AbstractStorageTest(Storage storage) {
