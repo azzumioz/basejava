@@ -28,20 +28,24 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         printDirectoryDeeply(dir);
-
     }
 
     public static void printDirectoryDeeply(File dir) {
         File[] files = dir.listFiles();
-
         if (files != null) {
             for (File file : files) {
+                int count = file.getAbsolutePath().split("\\\\").length - 10;
                 if (file.isFile()) {
-                    System.out.println("files:" + file.getName());
-                } else if (file.isDirectory()) {
-                    System.out.println("dir:" + file.getName());
+                    for (int i = 0; i < count; i++) {
+                        System.out.print("\t");
+                    }
+                    System.out.println("files: " + file.getName());
+                } else {
+                    for (int i = 0; i < count; i++) {
+                        System.out.print("\t");
+                    }
+                    System.out.println("dir: " + file.getName());
                     printDirectoryDeeply(file);
                 }
             }

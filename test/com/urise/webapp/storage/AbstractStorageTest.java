@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
+    //protected static final File STORAGE_DIR = new File("c:/users/work/basejava/storage");
+    protected static final String STORAGE_DIR = "c:/users/work/basejava/storage";
 
     protected Storage storage;
 
@@ -41,12 +43,12 @@ public abstract class AbstractStorageTest {
                 new OrganizationSection(
                         new Organization("Org1", "hhtp://org1.com",
                                 new Organization.Position(2002, Month.OCTOBER, "position1", "content1"),
-                                new Organization.Position(2003, Month.SEPTEMBER, 2004, Month.OCTOBER,"position2", "content2"))));
+                                new Organization.Position(2003, Month.SEPTEMBER, 2004, Month.OCTOBER, "position2", "content2"))));
         RESUME_1.addSections(SectionType.EDUCATION,
                 new OrganizationSection(
                         new Organization("Edu1", "hhtp://edu1.com",
-                                new Organization.Position(2004, Month.OCTOBER,  2005, Month.OCTOBER,"position1", null),
-                                new Organization.Position(2005, Month.SEPTEMBER,  2006, Month.OCTOBER,"position2", "content2")),
+                                new Organization.Position(2004, Month.OCTOBER, 2005, Month.OCTOBER, "position1", null),
+                                new Organization.Position(2005, Month.SEPTEMBER, 2006, Month.OCTOBER, "position2", "content2")),
                         new Organization("Edu2", "http://edu2.com")));
         RESUME_2.addContacts(ContactTypes.SKYPE, "skype1");
         RESUME_2.addContacts(ContactTypes.PHONE, "1222232");
@@ -90,7 +92,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1, "new Name");
         storage.update(RESUME_5);
-        Assert.assertSame(RESUME_5, storage.get(UUID_1));
+        Assert.assertTrue(RESUME_5.equals(storage.get(UUID_1)));
     }
 
     @Test(expected = NotExistStorageException.class)
