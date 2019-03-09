@@ -15,6 +15,7 @@ public class MainFile {
             throw new RuntimeException("Error", e);
         }
         File dir = new File("./src/com/urise/webapp");
+        //File dir = new File("c:/tmp");
         System.out.println(dir.isDirectory());
         String[] list = dir.list();
         if (list != null) {
@@ -28,25 +29,18 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        printDirectoryDeeply(dir);
+        printDirectoryDeeply(dir, "");
     }
 
-    public static void printDirectoryDeeply(File dir) {
+    public static void printDirectoryDeeply(File dir, String tab) {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-                int count = file.getAbsolutePath().split("\\\\").length - 10;
-                if (file.isFile()) {
-                    for (int i = 0; i < count; i++) {
-                        System.out.print("\t");
-                    }
-                    System.out.println("files: " + file.getName());
+                if (file.isDirectory()) {
+                    System.out.println(tab + "\t" + "dir: " + file.getName());
+                    printDirectoryDeeply(file, tab + "\t");
                 } else {
-                    for (int i = 0; i < count; i++) {
-                        System.out.print("\t");
-                    }
-                    System.out.println("dir: " + file.getName());
-                    printDirectoryDeeply(file);
+                    System.out.println(tab + "\t" + "file: " + file.getName());
                 }
             }
         }
