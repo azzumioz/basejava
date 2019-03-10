@@ -15,7 +15,6 @@ public class MainFile {
             throw new RuntimeException("Error", e);
         }
         File dir = new File("./src/com/urise/webapp");
-        //File dir = new File("c:/tmp");
         System.out.println(dir.isDirectory());
         String[] list = dir.list();
         if (list != null) {
@@ -37,7 +36,7 @@ public class MainFile {
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    System.out.println(tab + "\t" + "dir: " + file.getName());
+                    System.out.println(tab + "" + "dir: " + file.getName());
                     printDirectoryDeeply(file, tab + "\t");
                 } else {
                     System.out.println(tab + "\t" + "file: " + file.getName());

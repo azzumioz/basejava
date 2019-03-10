@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.*;
 
 public class MapUuidStorage extends AbstractStorage<String> {
-    protected Map<String, Resume> map = new HashMap<>();
+    private Map<String, Resume> map = new HashMap<>();
 
     @Override
     public void clear() {

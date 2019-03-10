@@ -7,8 +7,8 @@ import java.time.Month;
 
 public class ResumeTestData {
 
-    public static void main(String[] args) {
-        Resume r1 = new Resume("uuid1", "Григорий Кислин");
+    public static Resume getResume () {
+        Resume r1 = new Resume("uuid1", "Name1");
 
         r1.addContacts(ContactTypes.PHONE, "+7(921) 855-0482");
         r1.addContacts(ContactTypes.SKYPE, "grigory.kislin");
@@ -44,6 +44,11 @@ public class ResumeTestData {
                         new Organization.Position(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY), "Аспирантура (программист С, С++)", null),
                         new Organization.Position(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY), "Инженер (программист Fortran, C)", null))));
 
+        return r1;
+    }
+
+    public static void main(String[] args) {
+        Resume r1 = getResume();
         System.out.println(r1.getFullName());
         for (ContactTypes type : ContactTypes.values()) {
             if (r1.getContacts(type) != null) {

@@ -64,7 +64,7 @@ public class Resume implements Comparable<Resume>, Serializable {
         if (!uuid.equals(resume.uuid)) return false;
         if (!fullName.equals(resume.fullName)) return false;
         if (!contacts.equals(resume.contacts)) return false;
-        return fullName.equals(resume.fullName);
+        return sections.equals(resume.sections);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.urise.webapp.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +14,7 @@ public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Link homePage;
-    private List<Position> positions = new ArrayList<>();
+    private List<Position> positions;
 
     public Organization(String name, String url, Position... positions) {
         this(new Link(name, url), Arrays.asList(positions));
@@ -50,6 +49,8 @@ public class Organization implements Serializable {
     }
 
     public static class Position implements Serializable{
+        private static final long serialVersionUID = 1L;
+
         private final LocalDate startDate;
         private final LocalDate endDate;
         private final String title;
