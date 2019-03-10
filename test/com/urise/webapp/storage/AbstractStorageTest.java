@@ -27,7 +27,7 @@ public abstract class AbstractStorageTest {
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = ResumeTestData.getResume();
+        RESUME_1 = ResumeTestData.getResume(UUID_1, "Name1");
         RESUME_2 = new Resume(UUID_2, "Name2");
         RESUME_3 = new Resume(UUID_3, "Name3");
         RESUME_4 = new Resume(UUID_4, "Name4");
@@ -67,7 +67,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume RESUME_5 = new Resume(UUID_1, "new Name");
         storage.update(RESUME_5);
-        Assert.assertTrue(RESUME_5.equals(storage.get(UUID_1)));
+        Assert.assertEquals(RESUME_5, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)

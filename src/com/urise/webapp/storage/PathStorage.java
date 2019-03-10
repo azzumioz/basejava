@@ -93,7 +93,7 @@ public class PathStorage extends AbstractStorage<Path> {
         return listFiles().collect(Collectors.toList()).size();
     }
 
-    protected Stream<Path> listFiles() {
+    private Stream<Path> listFiles() {
         try {
             return Files.list(directory);
         } catch (IOException e) {

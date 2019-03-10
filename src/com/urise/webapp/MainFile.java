@@ -31,15 +31,15 @@ public class MainFile {
         printDirectoryDeeply(dir, "");
     }
 
-    public static void printDirectoryDeeply(File dir, String tab) {
+    private static void printDirectoryDeeply(File dir, String tab) {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    System.out.println(tab + "" + "dir: " + file.getName());
-                    printDirectoryDeeply(file, tab + "\t");
+                    System.out.println(tab + "|-" + file.getName());
+                    printDirectoryDeeply(file, tab + "|\t");
                 } else {
-                    System.out.println(tab + "\t" + "file: " + file.getName());
+                    System.out.println(tab + "+-" + file.getName());
                 }
             }
         }
