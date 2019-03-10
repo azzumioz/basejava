@@ -28,9 +28,9 @@ public abstract class AbstractStorageTest {
 
     static {
         RESUME_1 = ResumeTestData.getResume(UUID_1, "Name1");
-        RESUME_2 = new Resume(UUID_2, "Name2");
-        RESUME_3 = new Resume(UUID_3, "Name3");
-        RESUME_4 = new Resume(UUID_4, "Name4");
+        RESUME_2 = ResumeTestData.getResume(UUID_2, "Name2");
+        RESUME_3 = ResumeTestData.getResume(UUID_3, "Name3");
+        RESUME_4 = ResumeTestData.getResume(UUID_4, "Name4");
     }
 
     protected AbstractStorageTest(Storage storage) {
