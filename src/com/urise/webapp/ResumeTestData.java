@@ -7,8 +7,8 @@ import java.time.Month;
 
 public class ResumeTestData {
 
-    public static Resume getResume (String UUID, String Name) {
-        Resume r1 = new Resume(UUID, Name);
+    public static Resume getResume(String uuid, String FullName) {
+        Resume r1 = new Resume(uuid, FullName);
 
         r1.addContacts(ContactTypes.PHONE, "+7(921) 855-0482");
         r1.addContacts(ContactTypes.SKYPE, "grigory.kislin");
