@@ -2,7 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.streamstorage.Strategy;
+import com.urise.webapp.storage.serializer.StreamSerializer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,20 +15,20 @@ import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
-    private Strategy strategy;
+    private StreamSerializer streamSerializer;
 
-    protected PathStorage(String dir, Strategy strategy) {
+    protected PathStorage(String dir, StreamSerializer streamSerializer) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not Directory or is not writable");
         }
-        this.strategy = strategy;
+        this.streamSerializer = streamSerializer;
     }
 
     @Override
     protected Path getSearchKey(String uuid) {
-        return Paths.get(directory.toString() + File.separator + uuid);
+        return directory.resolve(uuid);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.createFile(file);
         } catch (IOException e) {
-            throw new StorageException("Could not create file" + file.getFileName(), null, e);
+            throw new StorageException("Could not create file" + file, getFileName(file), e);
         }
         doUpdate(file, resume);
     }
@@ -44,25 +44,24 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected void doUpdate(Path file, Resume resume) {
         try {
-            strategy.doWrite(new BufferedOutputStream(new FileOutputStream(file.toString())), resume);
+            streamSerializer.doWrite(new BufferedOutputStream(Files.newOutputStream(file)), resume);
         } catch (IOException e) {
-            throw new StorageException("Write error" + file.getFileName(), null, e);
+            throw new StorageException("Path write error", resume.getUuid(), e);
         }
     }
 
     @Override
     protected Resume doGet(Path file) {
         try {
-            return strategy.doRead(new BufferedInputStream(new FileInputStream(file.toString())));
+            return streamSerializer.doRead(new BufferedInputStream(Files.newInputStream(file)));
         } catch (IOException e) {
-            throw new StorageException("Read error" + file.getFileName(), null, e);
+            throw new StorageException("Path read error", getFileName(file), e);
         }
     }
 
     @Override
     protected List<Resume> doCopyAll() {
-        List<Resume> listResume = listFiles().map(this::doGet).collect(Collectors.toList());
-        return listResume;
+        return getFilesList().map(this::doGet).collect(Collectors.toList());
     }
 
     @Override
@@ -70,31 +69,35 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(file);
         } catch (IOException e) {
-            throw new StorageException("Delete file error", null);
+            throw new StorageException("Path delete error", getFileName(file), e);
         }
     }
 
     @Override
     protected boolean isExist(Path file) {
-        return Files.exists(file);
+        return Files.isRegularFile(file);
     }
 
     @Override
     public void clear() {
-        listFiles().forEach(this::doDelete);
+        getFilesList().forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-        return listFiles().collect(Collectors.toList()).size();
+        return (int) getFilesList().count();
     }
 
-    private Stream<Path> listFiles() {
+    private Stream<Path> getFilesList() {
         try {
             return Files.list(directory);
         } catch (IOException e) {
-            throw new StorageException("List file read error", null);
+            throw new StorageException("List file read error", e);
         }
+    }
+
+    private String getFileName(Path file) {
+        return file.getFileName().toString();
     }
 
 }
