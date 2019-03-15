@@ -50,12 +50,20 @@ public class Resume implements Comparable<Resume>, Serializable {
         contacts.put(type, content);
     }
 
+    public Map<ContactTypes, String> getContacts() {
+        return contacts;
+    }
+
     public String getContacts(ContactTypes type) {
         return contacts.get(type);
     }
 
     public void addSections(SectionType type, AbstractSection abstractSection) {
         sections.put(type, abstractSection);
+    }
+
+    public Map<SectionType, AbstractSection> getSections() {
+        return sections;
     }
 
     public AbstractSection getSection(SectionType type) {
@@ -94,4 +102,5 @@ public class Resume implements Comparable<Resume>, Serializable {
         int cmp = fullName.compareTo(o.fullName);
         return cmp != 0 ? cmp : uuid.compareTo(o.uuid);
     }
+
 }
