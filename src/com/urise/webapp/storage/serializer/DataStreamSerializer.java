@@ -1,6 +1,5 @@
 package com.urise.webapp.storage.serializer;
 
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 
 import java.io.*;
@@ -8,7 +7,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class DataStreamSerializer implements StreamSerializer {
 
@@ -26,34 +24,38 @@ public class DataStreamSerializer implements StreamSerializer {
             Map<SectionType, AbstractSection> sections = resume.getSections();
             dos.writeInt(sections.size());
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                switch (entry.getValue().getClass().getSimpleName()) {
-                    case "TextSection":
-                        dos.writeUTF(entry.getValue().getClass().getName());
+                switch (entry.getKey()) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        dos.writeUTF(entry.getKey().toString());
                         dos.writeUTF(entry.getValue().toString());
                         break;
-                    case "ListSection":
-                        dos.writeUTF(entry.getValue().getClass().getName());
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        dos.writeUTF(entry.getKey().toString());
                         int sizeList = (((ListSection) entry.getValue()).getItems().size());
                         dos.writeInt(sizeList);
                         for (int i = 0; i < sizeList; i++) {
                             dos.writeUTF(((ListSection) entry.getValue()).getItems().get(i));
                         }
                         break;
-                    case "OrganizationSection":
-                        dos.writeUTF(entry.getValue().getClass().getName());
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        dos.writeUTF(entry.getKey().toString());
                         int sizeOrganizationSection = (((OrganizationSection) entry.getValue()).getOrganizations().size());
                         dos.writeInt(sizeOrganizationSection);
                         for (int numSection = 0; numSection < sizeOrganizationSection; numSection++) {
-                            dos.writeUTF(((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getHomePage().getName());
-                            dos.writeUTF(((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getHomePage().getUrl());
+                            Organization organization = ((OrganizationSection) entry.getValue()).getOrganizations().get(numSection);
+                            dos.writeUTF(organization.getHomePage().getName());
+                            dos.writeUTF(writeMaybeNull(organization.getHomePage().getUrl()));
                             int sizePosition = ((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getPositions().size();
                             dos.writeInt(sizePosition);
                             for (int numPosition = 0; numPosition < sizePosition; numPosition++) {
-                                dos.writeUTF(((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getPositions().get(numPosition).getStartDate().toString());
-                                dos.writeUTF(((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getPositions().get(numPosition).getEndDate().toString());
-                                dos.writeUTF(((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getPositions().get(numPosition).getTitle());
-                                dos.writeUTF(checkNull(((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getPositions().get(numPosition).getDescription()));
+                                Organization.Position position = organization.getPositions().get(numPosition);
+                                dos.writeUTF(position.getStartDate().toString());
+                                dos.writeUTF(position.getEndDate().toString());
+                                dos.writeUTF(position.getTitle());
+                                dos.writeUTF(writeMaybeNull(position.getDescription()));
                             }
                         }
                         break;
@@ -75,49 +77,48 @@ public class DataStreamSerializer implements StreamSerializer {
             int sizeSection = dis.readInt();
             for (int i = 0; i < sizeSection; i++) {
                 String section = dis.readUTF();
-                try {
-                    switch (Objects.requireNonNull(Class.forName(dis.readUTF())).newInstance().getClass().getSimpleName()) {
-                        case "TextSection":
-                            res.addSections(SectionType.valueOf(section), new TextSection(dis.readUTF()));
-                            break;
-                        case "ListSection":
-                            List<String> listSection = new ArrayList<>();
-                            int sizeListSection = dis.readInt();
-                            for (int numSection = 0; numSection < sizeListSection; numSection++) {
-                                listSection.add(dis.readUTF());
+                switch (section) {
+                    case "OBJECTIVE":
+                    case "PERSONAL":
+                        res.addSections(SectionType.valueOf(section), new TextSection(dis.readUTF()));
+                        break;
+                    case "ACHIEVEMENT":
+                    case "QUALIFICATIONS":
+                        List<String> listSection = new ArrayList<>();
+                        int sizeListSection = dis.readInt();
+                        for (int numSection = 0; numSection < sizeListSection; numSection++) {
+                            listSection.add(dis.readUTF());
+                        }
+                        res.addSections(SectionType.valueOf(section), new ListSection(listSection));
+                        break;
+                    case "EXPERIENCE":
+                    case "EDUCATION":
+                        List<Organization> listOrganizations = new ArrayList<>();
+                        int sizeOrganizationSection = dis.readInt();
+                        for (int numOrganization = 0; numOrganization < sizeOrganizationSection; numOrganization++) {
+                            String name = dis.readUTF();
+                            String url = readMaybeNull(dis.readUTF());
+                            List<Organization.Position> listPositions = new ArrayList<>();
+                            int sizePosition = dis.readInt();
+                            for (int numPosition = 0; numPosition < sizePosition; numPosition++) {
+                                listPositions.add(new Organization.Position(LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF()), dis.readUTF(), readMaybeNull(dis.readUTF())));
                             }
-                            res.addSections(SectionType.valueOf(section), new ListSection(listSection));
-                            break;
-                        case "OrganizationSection":
-                            List<Organization> listOrganizations = new ArrayList<>();
-                            int sizeOrganizationSection = dis.readInt();
-                            for (int numOrganization = 0; numOrganization < sizeOrganizationSection; numOrganization++) {
-                                String name = dis.readUTF();
-                                String url = dis.readUTF();
-                                List<Organization.Position> listPositions = new ArrayList<>();
-                                int sizePosition = dis.readInt();
-                                for (int numPosition = 0; numPosition < sizePosition; numPosition++) {
-                                    listPositions.add(new Organization.Position(LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF()), dis.readUTF(), getNull(dis.readUTF())));
-                                }
-                                listOrganizations.add(new Organization(new Link(name, url), listPositions));
-                            }
-                            res.addSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
-                            break;
-                    }
-                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                    throw new StorageException("Error in DataStreamSerializer", e);
+                            listOrganizations.add(new Organization(new Link(name, url), listPositions));
+                        }
+                        res.addSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
+                        break;
                 }
             }
             return res;
         }
     }
 
-    private String checkNull(String value) {
-        return value == null ? "NULL" : value;
+    private String writeMaybeNull(String value) {
+        return value == null ? "" : value;
     }
 
-    private String getNull(String value) {
-        return value.equals("NULL") ? null : value;
+    private String readMaybeNull(String value) {
+        return value.equals("") ? null : value;
     }
 
 }
