@@ -1,5 +1,6 @@
 package com.urise.webapp.storage.serializer;
 
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 
 import java.io.*;
@@ -13,51 +14,46 @@ public class DataStreamSerializer implements StreamSerializer {
     @Override
     public void doWrite(OutputStream os, Resume resume) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
-            dos.writeUTF(resume.getUuid());
-            dos.writeUTF(resume.getFullName());
+            writeString(dos, resume.getUuid());
+            writeString(dos, resume.getFullName());
             Map<ContactTypes, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactTypes, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
+            writeInt(dos, contacts.size());
+            contacts.forEach((key, value) -> {
+                writeString(dos, key.name());
+                writeString(dos, value);
+            });
+
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
+            writeInt(dos, sections.size());
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+                writeString(dos, entry.getKey().toString());
                 switch (entry.getKey()) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(entry.getKey().toString());
-                        dos.writeUTF(entry.getValue().toString());
+                        writeString(dos, entry.getValue().toString());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        dos.writeUTF(entry.getKey().toString());
-                        int sizeList = (((ListSection) entry.getValue()).getItems().size());
-                        dos.writeInt(sizeList);
-                        for (int i = 0; i < sizeList; i++) {
-                            dos.writeUTF(((ListSection) entry.getValue()).getItems().get(i));
-                        }
+                        List<String> items = ((ListSection) entry.getValue()).getItems();
+                        writeInt(dos, items.size());
+                        items.forEach(s -> writeString(dos, s));
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        dos.writeUTF(entry.getKey().toString());
-                        int sizeOrganizationSection = (((OrganizationSection) entry.getValue()).getOrganizations().size());
-                        dos.writeInt(sizeOrganizationSection);
-                        for (int numSection = 0; numSection < sizeOrganizationSection; numSection++) {
-                            Organization organization = ((OrganizationSection) entry.getValue()).getOrganizations().get(numSection);
-                            dos.writeUTF(organization.getHomePage().getName());
-                            dos.writeUTF(writeMaybeNull(organization.getHomePage().getUrl()));
-                            int sizePosition = ((OrganizationSection) entry.getValue()).getOrganizations().get(numSection).getPositions().size();
-                            dos.writeInt(sizePosition);
-                            for (int numPosition = 0; numPosition < sizePosition; numPosition++) {
-                                Organization.Position position = organization.getPositions().get(numPosition);
-                                dos.writeUTF(position.getStartDate().toString());
-                                dos.writeUTF(position.getEndDate().toString());
-                                dos.writeUTF(position.getTitle());
-                                dos.writeUTF(writeMaybeNull(position.getDescription()));
-                            }
-                        }
+                        List<Organization> organizations = ((OrganizationSection) entry.getValue()).getOrganizations();
+                        writeInt(dos, organizations.size());
+                        organizations.forEach(organization -> {
+                            writeString(dos, organization.getHomePage().getName());
+                            writeString(dos, writeMaybeNull(organization.getHomePage().getUrl()));
+                            int sizePosition = (organization.getPositions().size());
+                            writeInt(dos, sizePosition);
+                            organization.getPositions().forEach(position -> {
+                                writeString(dos, position.getStartDate().toString());
+                                writeString(dos, position.getEndDate().toString());
+                                writeString(dos, position.getTitle());
+                                writeString(dos, writeMaybeNull(position.getDescription()));
+                            });
+                        });
                         break;
                 }
             }
@@ -119,6 +115,22 @@ public class DataStreamSerializer implements StreamSerializer {
 
     private String readMaybeNull(String value) {
         return value.equals("") ? null : value;
+    }
+
+    private void writeInt(DataOutputStream dos, int value) {
+        try {
+            dos.writeInt(value);
+        } catch (IOException e) {
+            throw new StorageException("Error in doWrite DataStreamSerializer", e);
+        }
+    }
+
+    private void writeString(DataOutputStream dos, String value) {
+        try {
+            dos.writeUTF(value);
+        } catch (IOException e) {
+            throw new StorageException("Error in doWrite DataStreamSerializer", e);
+        }
     }
 
 }
