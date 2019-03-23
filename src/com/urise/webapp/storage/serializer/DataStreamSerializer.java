@@ -35,8 +35,7 @@ public class DataStreamSerializer implements StreamSerializer {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
                         List<String> items = ((ListSection) entry.getValue()).getItems();
-                        writeInt(dos, items.size());
-                        items.forEach(s -> writeString(dos, s));
+                        writeWithExeption(dos, wl, items);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
@@ -132,5 +131,22 @@ public class DataStreamSerializer implements StreamSerializer {
             throw new StorageException("Error in doWrite DataStreamSerializer", e);
         }
     }
+
+
+    private <T> void writeWithExeption(DataOutputStream dos, wList consumer, List<T> list) throws IOException {
+        consumer.write(dos, list);
+    }
+
+    @FunctionalInterface
+    interface wList<T> {
+        void write(DataOutputStream dos, List<T> list) throws IOException;
+    }
+
+    private wList wl = (dos, list) -> {
+        dos.writeInt(list.size());
+        for (Object o : list) {
+            dos.writeUTF((String) o);
+        }
+    };
 
 }
