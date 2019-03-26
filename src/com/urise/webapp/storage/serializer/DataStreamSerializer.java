@@ -1,6 +1,5 @@
 package com.urise.webapp.storage.serializer;
 
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 
 import java.io.*;
@@ -14,48 +13,46 @@ public class DataStreamSerializer implements StreamSerializer {
     @Override
     public void doWrite(OutputStream os, Resume resume) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
-            writeString(dos, resume.getUuid());
-            writeString(dos, resume.getFullName());
+            dos.writeUTF(resume.getUuid());
+            dos.writeUTF(resume.getFullName());
             Map<ContactTypes, String> contacts = resume.getContacts();
-            writeInt(dos, contacts.size());
-            contacts.forEach((key, value) -> {
-                writeString(dos, key.name());
-                writeString(dos, value);
-            });
-
+            WriteMap<ContactTypes, String> contactWriteMap = (contactTypes, content) -> {
+                dos.writeUTF(contactTypes.name());
+                dos.writeUTF(content);
+            };
+            writeMapWithExeption(contacts, dos, contactWriteMap);
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            writeInt(dos, sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                writeString(dos, entry.getKey().toString());
-                switch (entry.getKey()) {
+            WriteMap<SectionType, AbstractSection> sectionWriteMap = (sectionType, section) -> {
+                dos.writeUTF(sectionType.name());
+                switch (sectionType) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        writeString(dos, entry.getValue().toString());
+                        dos.writeUTF(section.toString());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        List<String> items = ((ListSection) entry.getValue()).getItems();
-                        writeWithExeption(dos, wl, items);
+                        WriteList<String> writeList = dos::writeUTF;
+                        writeListWithExeption(((ListSection) section).getItems(), dos, writeList);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        List<Organization> organizations = ((OrganizationSection) entry.getValue()).getOrganizations();
-                        writeInt(dos, organizations.size());
-                        organizations.forEach(organization -> {
-                            writeString(dos, organization.getHomePage().getName());
-                            writeString(dos, writeMaybeNull(organization.getHomePage().getUrl()));
-                            int sizePosition = (organization.getPositions().size());
-                            writeInt(dos, sizePosition);
-                            organization.getPositions().forEach(position -> {
-                                writeString(dos, position.getStartDate().toString());
-                                writeString(dos, position.getEndDate().toString());
-                                writeString(dos, position.getTitle());
-                                writeString(dos, writeMaybeNull(position.getDescription()));
-                            });
-                        });
+                        WriteList<Organization.Position> writePosition = position -> {
+                            dos.writeUTF(position.getStartDate().toString());
+                            dos.writeUTF(position.getEndDate().toString());
+                            dos.writeUTF(position.getTitle());
+                            dos.writeUTF(writeMaybeNull(position.getDescription()));
+                        };
+                        WriteList<Organization> writeOrganization = organization -> {
+                            dos.writeUTF(organization.getHomePage().getName());
+                            dos.writeUTF(writeMaybeNull(organization.getHomePage().getUrl()));
+                            writeListWithExeption(organization.getPositions(), dos, writePosition);
+                        };
+                        writeListWithExeption(((OrganizationSection) section).getOrganizations(), dos, writeOrganization);
                         break;
                 }
-            }
+
+            };
+            writeMapWithExeption(sections, dos, sectionWriteMap);
         }
     }
 
@@ -64,10 +61,10 @@ public class DataStreamSerializer implements StreamSerializer {
         try (DataInputStream dis = new DataInputStream(is)) {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
-            Resume res = new Resume(uuid, fullName);
+            Resume resume = new Resume(uuid, fullName);
             int size = dis.readInt();
             for (int i = 0; i < size; i++) {
-                res.addContacts(ContactTypes.valueOf(dis.readUTF()), dis.readUTF());
+                resume.addContacts(ContactTypes.valueOf(dis.readUTF()), dis.readUTF());
             }
             int sizeSection = dis.readInt();
             for (int i = 0; i < sizeSection; i++) {
@@ -75,7 +72,7 @@ public class DataStreamSerializer implements StreamSerializer {
                 switch (section) {
                     case "OBJECTIVE":
                     case "PERSONAL":
-                        res.addSections(SectionType.valueOf(section), new TextSection(dis.readUTF()));
+                        resume.addSections(SectionType.valueOf(section), new TextSection(dis.readUTF()));
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATIONS":
@@ -84,7 +81,7 @@ public class DataStreamSerializer implements StreamSerializer {
                         for (int numSection = 0; numSection < sizeListSection; numSection++) {
                             listSection.add(dis.readUTF());
                         }
-                        res.addSections(SectionType.valueOf(section), new ListSection(listSection));
+                        resume.addSections(SectionType.valueOf(section), new ListSection(listSection));
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
@@ -100,11 +97,11 @@ public class DataStreamSerializer implements StreamSerializer {
                             }
                             listOrganizations.add(new Organization(new Link(name, url), listPositions));
                         }
-                        res.addSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
+                        resume.addSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
                         break;
                 }
             }
-            return res;
+            return resume;
         }
     }
 
@@ -116,37 +113,28 @@ public class DataStreamSerializer implements StreamSerializer {
         return value.equals("") ? null : value;
     }
 
-    private void writeInt(DataOutputStream dos, int value) {
-        try {
-            dos.writeInt(value);
-        } catch (IOException e) {
-            throw new StorageException("Error in doWrite DataStreamSerializer", e);
+    private <T> void writeListWithExeption(List<T> list, DataOutputStream dos, WriteList consumer) throws IOException {
+        dos.writeInt(list.size());
+        for (T t : list) {
+            consumer.write(t);
         }
     }
 
-    private void writeString(DataOutputStream dos, String value) {
-        try {
-            dos.writeUTF(value);
-        } catch (IOException e) {
-            throw new StorageException("Error in doWrite DataStreamSerializer", e);
+    private <K, V> void writeMapWithExeption(Map<K, V> map, DataOutputStream dos, WriteMap consumer) throws IOException {
+        dos.writeInt(map.size());
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            consumer.write(entry.getKey(), entry.getValue());
         }
-    }
-
-
-    private <T> void writeWithExeption(DataOutputStream dos, wList consumer, List<T> list) throws IOException {
-        consumer.write(dos, list);
     }
 
     @FunctionalInterface
-    interface wList<T> {
-        void write(DataOutputStream dos, List<T> list) throws IOException;
+    interface WriteMap<K, V> {
+        void write(K key, V value) throws IOException;
     }
 
-    private wList wl = (dos, list) -> {
-        dos.writeInt(list.size());
-        for (Object o : list) {
-            dos.writeUTF((String) o);
-        }
-    };
+    @FunctionalInterface
+    interface WriteList<T> {
+        void write(T value) throws IOException;
+    }
 
 }
