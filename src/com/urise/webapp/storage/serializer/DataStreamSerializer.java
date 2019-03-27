@@ -113,14 +113,14 @@ public class DataStreamSerializer implements StreamSerializer {
         return value.equals("") ? null : value;
     }
 
-    private <T> void writeListWithExeption(List<T> list, DataOutputStream dos, WriteList consumer) throws IOException {
+    private <T> void writeListWithExeption(List<T> list, DataOutputStream dos, WriteList <T> consumer) throws IOException {
         dos.writeInt(list.size());
         for (T t : list) {
             consumer.write(t);
         }
     }
 
-    private <K, V> void writeMapWithExeption(Map<K, V> map, DataOutputStream dos, WriteMap consumer) throws IOException {
+    private <K, V> void writeMapWithExeption(Map<K, V> map, DataOutputStream dos, WriteMap <K, V> consumer) throws IOException {
         dos.writeInt(map.size());
         for (Map.Entry<K, V> entry : map.entrySet()) {
             consumer.write(entry.getKey(), entry.getValue());
