@@ -4,9 +4,7 @@ import com.urise.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamSerializer implements StreamSerializer {
 
@@ -16,43 +14,45 @@ public class DataStreamSerializer implements StreamSerializer {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
             Map<ContactTypes, String> contacts = resume.getContacts();
-            WriteMap<ContactTypes, String> contactWriteMap = (contactTypes, content) -> {
-                dos.writeUTF(contactTypes.name());
-                dos.writeUTF(content);
+            Set<Map.Entry<ContactTypes, String>> entryContacts = contacts.entrySet();
+            Write<Map.Entry<ContactTypes, String>> writeContacts = contact -> {
+                dos.writeUTF(contact.getKey().name());
+                dos.writeUTF(contact.getValue());
             };
-            writeMapWithExeption(contacts, dos, contactWriteMap);
+            writeWithExeption(entryContacts, dos, writeContacts);
+
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            WriteMap<SectionType, AbstractSection> sectionWriteMap = (sectionType, section) -> {
-                dos.writeUTF(sectionType.name());
-                switch (sectionType) {
+            Set<Map.Entry<SectionType, AbstractSection>> entrySections = sections.entrySet();
+            Write<Map.Entry<SectionType, AbstractSection>> writeSections = section -> {
+                dos.writeUTF(section.getKey().name());
+                switch (section.getKey()) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(section.toString());
+                        dos.writeUTF(section.getValue().toString());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        WriteList<String> writeList = dos::writeUTF;
-                        writeListWithExeption(((ListSection) section).getItems(), dos, writeList);
+                        Write<String> writeList = dos::writeUTF;
+                        writeWithExeption(((ListSection) section.getValue()).getItems(), dos, writeList);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        WriteList<Organization.Position> writePosition = position -> {
+                        Write<Organization.Position> writePositions = position -> {
                             dos.writeUTF(position.getStartDate().toString());
                             dos.writeUTF(position.getEndDate().toString());
                             dos.writeUTF(position.getTitle());
                             dos.writeUTF(writeMaybeNull(position.getDescription()));
                         };
-                        WriteList<Organization> writeOrganization = organization -> {
+                        Write<Organization> writeOrganizations = organization -> {
                             dos.writeUTF(organization.getHomePage().getName());
                             dos.writeUTF(writeMaybeNull(organization.getHomePage().getUrl()));
-                            writeListWithExeption(organization.getPositions(), dos, writePosition);
+                            writeWithExeption(organization.getPositions(), dos, writePositions);
                         };
-                        writeListWithExeption(((OrganizationSection) section).getOrganizations(), dos, writeOrganization);
+                        writeWithExeption(((OrganizationSection) section.getValue()).getOrganizations(), dos, writeOrganizations);
                         break;
                 }
-
             };
-            writeMapWithExeption(sections, dos, sectionWriteMap);
+            writeWithExeption(entrySections, dos, writeSections);
         }
     }
 
@@ -113,27 +113,15 @@ public class DataStreamSerializer implements StreamSerializer {
         return value.equals("") ? null : value;
     }
 
-    private <T> void writeListWithExeption(List<T> list, DataOutputStream dos, WriteList <T> consumer) throws IOException {
-        dos.writeInt(list.size());
-        for (T t : list) {
+    private <T> void writeWithExeption(Collection<T> collection, DataOutputStream dos, Write<T> consumer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T t : collection) {
             consumer.write(t);
         }
     }
 
-    private <K, V> void writeMapWithExeption(Map<K, V> map, DataOutputStream dos, WriteMap <K, V> consumer) throws IOException {
-        dos.writeInt(map.size());
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            consumer.write(entry.getKey(), entry.getValue());
-        }
-    }
-
     @FunctionalInterface
-    interface WriteMap<K, V> {
-        void write(K key, V value) throws IOException;
-    }
-
-    @FunctionalInterface
-    interface WriteList<T> {
+    interface Write<T> {
         void write(T value) throws IOException;
     }
 
