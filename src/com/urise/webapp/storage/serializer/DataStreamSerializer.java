@@ -62,12 +62,9 @@ public class DataStreamSerializer implements StreamSerializer {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContacts(ContactTypes.valueOf(dis.readUTF()), dis.readUTF());
-            }
-            int sizeSection = dis.readInt();
-            for (int i = 0; i < sizeSection; i++) {
+            readWithExeption(dis, () -> resume.addContacts(ContactTypes.valueOf(dis.readUTF()), dis.readUTF()));
+
+            readWithExeption(dis, () -> {
                 String section = dis.readUTF();
                 switch (section) {
                     case "OBJECTIVE":
@@ -77,30 +74,23 @@ public class DataStreamSerializer implements StreamSerializer {
                     case "ACHIEVEMENT":
                     case "QUALIFICATIONS":
                         List<String> listSection = new ArrayList<>();
-                        int sizeListSection = dis.readInt();
-                        for (int numSection = 0; numSection < sizeListSection; numSection++) {
-                            listSection.add(dis.readUTF());
-                        }
+                        readWithExeption(dis, () -> listSection.add(dis.readUTF()));
                         resume.addSections(SectionType.valueOf(section), new ListSection(listSection));
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
                         List<Organization> listOrganizations = new ArrayList<>();
-                        int sizeOrganizationSection = dis.readInt();
-                        for (int numOrganization = 0; numOrganization < sizeOrganizationSection; numOrganization++) {
+                        readWithExeption(dis, () -> {
                             String name = dis.readUTF();
                             String url = readMaybeNull(dis.readUTF());
                             List<Organization.Position> listPositions = new ArrayList<>();
-                            int sizePosition = dis.readInt();
-                            for (int numPosition = 0; numPosition < sizePosition; numPosition++) {
-                                listPositions.add(new Organization.Position(LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF()), dis.readUTF(), readMaybeNull(dis.readUTF())));
-                            }
+                            readWithExeption(dis, () -> listPositions.add(new Organization.Position(LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF()), dis.readUTF(), readMaybeNull(dis.readUTF()))));
                             listOrganizations.add(new Organization(new Link(name, url), listPositions));
-                        }
+                        });
                         resume.addSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
                         break;
                 }
-            }
+            });
             return resume;
         }
     }
@@ -120,9 +110,21 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
+    private void readWithExeption(DataInputStream dis, Read consumer) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            consumer.read();
+        }
+    }
+
     @FunctionalInterface
     interface Write<T> {
         void write(T value) throws IOException;
+    }
+
+    @FunctionalInterface
+    interface Read {
+        void read() throws IOException;
     }
 
 }
