@@ -3,9 +3,9 @@ package com.urise.webapp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class MainStream {
     public static void main(String[] args) {
@@ -21,11 +21,12 @@ public class MainStream {
     }
 
     private List<Integer> oddOrEven(List<Integer> integers) {
-        Stream<Integer> stream = integers.stream();
-        if (stream.reduce(0, Integer::sum) % 2 == 0) {
-            return stream.filter(x -> x % 2 != 0).collect(Collectors.toList());
+        Predicate<Integer> condition = n -> n % 2 == 0;
+        if (integers.stream().reduce(0, Integer::sum) % 2 == 0) {
+            condition = n -> n % 2 != 0;
         }
-        return  stream.filter(x -> x % 2 == 0).collect(Collectors.toList());
+        return integers.stream().filter(condition).collect(Collectors.toList());
     }
+
 
 }
