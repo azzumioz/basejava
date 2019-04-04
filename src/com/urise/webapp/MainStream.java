@@ -21,10 +21,8 @@ public class MainStream {
     }
 
     private List<Integer> oddOrEven(List<Integer> integers) {
-        Predicate<Integer> condition = n -> n % 2 == 0;
-        if (integers.stream().reduce(0, Integer::sum) % 2 == 0) {
-            condition = n -> n % 2 != 0;
-        }
+        int div = integers.stream().reduce(0, Integer::sum) % 2;
+        Predicate<Integer> condition = n -> n % 2 != div;
         return integers.stream().filter(condition).collect(Collectors.toList());
     }
 
