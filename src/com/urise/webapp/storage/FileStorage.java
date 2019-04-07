@@ -13,8 +13,7 @@ public class FileStorage extends AbstractStorage<File> {
     private File directory;
     private StreamSerializer streamSerializer;
 
-    protected FileStorage(String dir, StreamSerializer streamSerializer) {
-        directory = new File(dir);
+    protected FileStorage(File directory, StreamSerializer streamSerializer) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -23,6 +22,7 @@ public class FileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
         }
         this.streamSerializer = streamSerializer;
+        this.directory = directory;
     }
 
     @Override
