@@ -99,8 +99,8 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("GetAllSorted");
-        parameters = new HashMap<>();
         sqlString = "SELECT * FROM resume ORDER BY resume.uuid, resume.full_name";
+        parameters = new HashMap<>();
         List<Resume> sortedList = new ArrayList<>();
         return sqlExecute(ps -> {
             ResultSet rs = ps.executeQuery();
