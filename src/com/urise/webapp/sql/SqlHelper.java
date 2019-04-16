@@ -15,11 +15,10 @@ public class SqlHelper {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 
-    public static <T> T sqlExecute(String sqlString, SetParamsRequest setParamsRequest, SqlRequest<T> SqlRequest) {
+    public static <T> T sqlExecute(String sqlString, SqlRequest<T> sqlRequest) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sqlString)) {
-            setParamsRequest.execute(ps);
-            return SqlRequest.execute(ps);
+            return sqlRequest.execute(ps);
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
                 throw new ExistStorageException("Resume already exist");
@@ -33,8 +32,4 @@ public class SqlHelper {
         T execute(PreparedStatement ps) throws SQLException;
     }
 
-    @FunctionalInterface
-    public interface SetParamsRequest {
-        PreparedStatement execute(PreparedStatement ps) throws SQLException;
-    }
 }
