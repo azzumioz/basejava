@@ -9,13 +9,13 @@ public class ResumeTestData {
     public static Resume getResume(String uuid, String fullName) {
         Resume r1 = new Resume(uuid, fullName);
 
-//        r1.addContacts(ContactTypes.PHONE, "+7(921) 855-0482");
-//        r1.addContacts(ContactTypes.SKYPE, "grigory.kislin");
-//        r1.addContacts(ContactTypes.EMAIL, "gkislin@yandex.ru");
-//        r1.addContacts(ContactTypes.LINKEDIN, "https://www.linkedin.com/in/gkislin");
-//        r1.addContacts(ContactTypes.GITHUB, "https://github.com/gkislin");
-//        r1.addContacts(ContactTypes.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
-//        r1.addContacts(ContactTypes.HOME_PAGE, "http://gkislin.ru/");
+        r1.addContacts(ContactTypes.PHONE, "+7(921) 855-0482");
+        r1.addContacts(ContactTypes.SKYPE, "grigory.kislin");
+        r1.addContacts(ContactTypes.EMAIL, "gkislin@yandex.ru");
+        r1.addContacts(ContactTypes.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        r1.addContacts(ContactTypes.GITHUB, "https://github.com/gkislin");
+        r1.addContacts(ContactTypes.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
+        r1.addContacts(ContactTypes.HOME_PAGE, "http://gkislin.ru/");
 //
 //        r1.addSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
 //        r1.addSections(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
