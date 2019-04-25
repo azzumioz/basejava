@@ -77,9 +77,10 @@ public class SqlStorage implements Storage {
                     }
                     Resume r = new Resume(uuid, rs.getString("full_name"));
                     do {
-                        if (rs.getString("type") != null) {
+                        String typeString = rs.getString("type");
+                        if (typeString != null) {
                             String value = rs.getString("value");
-                            ContactTypes type = ContactTypes.valueOf(rs.getString("type"));
+                            ContactTypes type = ContactTypes.valueOf(typeString);
                             r.addContacts(type, value);
                         }
                     } while (rs.next());
@@ -103,17 +104,28 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("GetAllSorted");
-        List<Resume> sortedList = new ArrayList<>();
-        sqlHelper.execute("SELECT * FROM resume ORDER BY resume.full_name, resume.uuid",
+        List<Resume> resumeList = new ArrayList<>();
+        List<String> listUUID = new ArrayList<>();
+        sqlHelper.execute("SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid ORDER BY r.full_name, r.uuid",
                 ps -> {
                     ResultSet rs = ps.executeQuery();
+                    Resume r = new Resume();
                     while (rs.next()) {
-                        Resume r = new Resume(rs.getString("uuid"), rs.getString("full_name"));
-                        sortedList.add(get(r.getUuid()));
+                        String uuid = rs.getString("uuid");
+                        String type = rs.getString("type");
+                        String value = rs.getString("value");
+                        if (listUUID.contains(uuid)) {
+                            r.addContacts(ContactTypes.valueOf(type), value);
+                        } else {
+                            r = new Resume(uuid, rs.getString("full_name"));
+                            r.addContacts(ContactTypes.valueOf(type), value);
+                            resumeList.add(r);
+                            listUUID.add(uuid);
+                        }
                     }
                     return null;
                 });
-        return sortedList;
+        return resumeList;
     }
 
     @Override
