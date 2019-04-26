@@ -6,9 +6,7 @@ import com.urise.webapp.model.Resume;
 import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class SqlStorage implements Storage {
@@ -104,8 +102,7 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("GetAllSorted");
-        List<Resume> resumeList = new ArrayList<>();
-        List<String> listUUID = new ArrayList<>();
+        Map<String, Resume> mapResume = new HashMap<>();
         sqlHelper.execute("SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid ORDER BY r.full_name, r.uuid",
                 ps -> {
                     ResultSet rs = ps.executeQuery();
@@ -114,17 +111,18 @@ public class SqlStorage implements Storage {
                         String uuid = rs.getString("uuid");
                         String type = rs.getString("type");
                         String value = rs.getString("value");
-                        if (listUUID.contains(uuid)) {
+                        if (mapResume.containsKey(uuid)) {
                             r.addContacts(ContactTypes.valueOf(type), value);
                         } else {
                             r = new Resume(uuid, rs.getString("full_name"));
                             r.addContacts(ContactTypes.valueOf(type), value);
-                            resumeList.add(r);
-                            listUUID.add(uuid);
+                            mapResume.put(uuid, r);
                         }
                     }
                     return null;
                 });
+        List<Resume> resumeList = new ArrayList<>(mapResume.values());
+        Collections.sort(resumeList);
         return resumeList;
     }
 
