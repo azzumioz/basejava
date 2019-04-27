@@ -106,18 +106,12 @@ public class SqlStorage implements Storage {
         sqlHelper.execute("SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid ORDER BY r.full_name, r.uuid",
                 ps -> {
                     ResultSet rs = ps.executeQuery();
-                    Resume r = new Resume();
                     while (rs.next()) {
                         String uuid = rs.getString("uuid");
                         String type = rs.getString("type");
                         String value = rs.getString("value");
-                        if (mapResume.containsKey(uuid)) {
-                            r.addContacts(ContactTypes.valueOf(type), value);
-                        } else {
-                            r = new Resume(uuid, rs.getString("full_name"));
-                            r.addContacts(ContactTypes.valueOf(type), value);
-                            mapResume.put(uuid, r);
-                        }
+                        String fullName = rs.getString("full_name");
+                        mapResume.computeIfAbsent(uuid, s -> new Resume(uuid, fullName)).addContacts(ContactTypes.valueOf(type), value);
                     }
                     return null;
                 });
