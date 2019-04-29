@@ -99,20 +99,40 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("GetAllSorted");
-        Map<String, Resume> mapResume = new LinkedHashMap<>();
-        sqlHelper.execute("SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid ORDER BY r.full_name, r.uuid",
-                ps -> {
-                    ResultSet rs = ps.executeQuery();
-                    while (rs.next()) {
-                        String uuid = rs.getString("uuid");
-                        String type = rs.getString("type");
-                        String value = rs.getString("value");
-                        String fullName = rs.getString("full_name");
-                        mapResume.computeIfAbsent(uuid, s -> new Resume(uuid, fullName)).addContacts(ContactTypes.valueOf(type), value);
+        List<Resume> listResume = new ArrayList<>();
+        sqlHelper.transactionalExecute(conn -> {
+                    try (PreparedStatement psResume = conn.prepareStatement("SELECT * FROM resume ORDER BY full_name, uuid");
+                         PreparedStatement psContact = conn.prepareStatement("SELECT * FROM contact");
+                         PreparedStatement psSection = conn.prepareStatement("SELECT * FROM section")
+                    ) {
+                        ResultSet rsResume = psResume.executeQuery();
+                        ResultSet rsContact = psContact.executeQuery();
+                        ResultSet rsSection = psSection.executeQuery();
+                        while (rsResume.next()) {
+                            String uuid = rsResume.getString("uuid");
+                            String fullName = rsResume.getString("full_name");
+                            Resume r = new Resume(uuid, fullName);
+                            while (rsContact.next()) {
+                                String uuidContact = rsContact.getString("resume_uuid");
+                                if (uuidContact.equals(uuid)) {
+                                    addContact(r, rsContact);
+                                }
+                            }
+                            while (rsSection.next()) {
+                                String uuidSection = rsSection.getString("resume_uuid");
+                                if (uuidSection.equals(uuid)) {
+                                    addSection(r, rsSection);
+                                }
+                            }
+                            listResume.add(r);
+                            rsContact = psContact.executeQuery();
+                            rsSection = psSection.executeQuery();
+                        }
                     }
                     return null;
-                });
-        return new ArrayList<>(mapResume.values());
+                }
+        );
+        return listResume;
     }
 
     @Override
@@ -137,12 +157,12 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void addContact(Resume r, ResultSet rs) throws SQLException {
+    private void addContact(Resume resume, ResultSet rs) throws SQLException {
         String typeString = rs.getString("type");
         if (typeString != null) {
             String value = rs.getString("value");
             ContactTypes type = ContactTypes.valueOf(typeString);
-            r.addContacts(type, value);
+            resume.addContacts(type, value);
         }
     }
 
@@ -177,7 +197,7 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void addSection(Resume r, ResultSet rs) throws SQLException {
+    private void addSection(Resume resume, ResultSet rs) throws SQLException {
         String typeString = rs.getString("type_section");
         if (typeString != null) {
             String value = rs.getString("value_section");
@@ -185,13 +205,13 @@ public class SqlStorage implements Storage {
             switch (type) {
                 case OBJECTIVE:
                 case PERSONAL:
-                    r.addSections(type, new TextSection(value));
+                    resume.addSections(type, new TextSection(value));
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
                     List<String> listSections = new ArrayList<>();
                     Collections.addAll(listSections, value.split("\\n"));
-                    r.addSections(type, new ListSection(listSections));
+                    resume.addSections(type, new ListSection(listSections));
             }
         }
     }
