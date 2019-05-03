@@ -9,8 +9,7 @@
         <servlet-class>com.urise.webapp.web.ResumeServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>resumeServlet</servlet-name>>
-        <url-pattern>/resume</url-pattern>>
-    </servlet-mapping>>
-
+        <servlet-name>resumeServlet</servlet-name>
+        <url-pattern>/resume</url-pattern>
+    </servlet-mapping>
 </web-app>
