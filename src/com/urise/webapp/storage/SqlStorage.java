@@ -99,40 +99,30 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("GetAllSorted");
-        List<Resume> listResume = new ArrayList<>();
+        Map<String, Resume> mapResume = new LinkedHashMap<>();
         sqlHelper.transactionalExecute(conn -> {
                     try (PreparedStatement psResume = conn.prepareStatement("SELECT * FROM resume ORDER BY full_name, uuid");
-                         PreparedStatement psContact = conn.prepareStatement("SELECT * FROM contact WHERE resume_uuid=?");
-                         PreparedStatement psSection = conn.prepareStatement("SELECT * FROM section WHERE resume_uuid=?")
+                         PreparedStatement psContact = conn.prepareStatement("SELECT * FROM contact");
+                         PreparedStatement psSection = conn.prepareStatement("SELECT * FROM section")
                     ) {
                         ResultSet rsResume = psResume.executeQuery();
+                        ResultSet rsContact = psContact.executeQuery();
+                        ResultSet rsSection = psSection.executeQuery();
                         while (rsResume.next()) {
                             String uuid = rsResume.getString("uuid");
-                            String fullName = rsResume.getString("full_name");
-                            Resume r = new Resume(uuid, fullName);
-                            psContact.setString(1, uuid);
-                            ResultSet rsContact = psContact.executeQuery();
-                            while (rsContact.next()) {
-                                String uuidContact = rsContact.getString("resume_uuid");
-                                if (uuidContact.equals(uuid)) {
-                                    addContact(r, rsContact);
-                                }
-                            }
-                            psSection.setString(1, uuid);
-                            ResultSet rsSection = psSection.executeQuery();
-                            while (rsSection.next()) {
-                                String uuidSection = rsSection.getString("resume_uuid");
-                                if (uuidSection.equals(uuid)) {
-                                    addSection(r, rsSection);
-                                }
-                            }
-                            listResume.add(r);
+                            mapResume.put(uuid, new Resume(uuid, rsResume.getString("full_name")));
+                        }
+                        while (rsContact.next()) {
+                            addContact(mapResume.get(rsContact.getString("resume_uuid")), rsContact);
+                        }
+                        while (rsSection.next()) {
+                            addSection(mapResume.get(rsSection.getString("resume_uuid")), rsSection);
                         }
                     }
                     return null;
                 }
         );
-        return listResume;
+        return new ArrayList<>(mapResume.values());
     }
 
     @Override
