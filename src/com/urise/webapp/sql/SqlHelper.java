@@ -18,11 +18,6 @@ public class SqlHelper {
     }
 
     public <T> T execute(String sqlString, SqlExecutor<T> executor) {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("PostgreSQL JDBC Driver is not found. Include it in your library path ", e);
-        }
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sqlString)) {
             return executor.execute(ps);
@@ -32,11 +27,6 @@ public class SqlHelper {
     }
 
     public <T> T transactionalExecute(SqlTransaction<T> executor) {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("PostgreSQL JDBC Driver is not found. Include it in your library path ", e);
-        }
         try (Connection conn = connectionFactory.getConnection()) {
             try {
                 conn.setAutoCommit(false);

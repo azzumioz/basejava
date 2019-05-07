@@ -77,12 +77,13 @@ public class ResumeServlet extends HttpServlet {
         } else {
             response.getWriter().write("<h1>" + "Список резюме" + "</h1>");
             List<Resume> listResume = STORAGE.getAllSorted();
-            response.getWriter().write("<table cellpadding='2'>");
-            response.getWriter().write("<tr><td colspan='2'>UUID</td><td colspan='2'>Name</td></tr>");
+            response.getWriter().write("<table border = '1' cellpadding='2'>");
+            response.getWriter().write("<tr><td colspan='2'>UUID</td><td colspan='2'>Name</td><td colspan='2'>Email</td></tr>");
             for (Resume resume : listResume) {
                 String uuid1 = resume.getUuid();
                 response.getWriter().write("<tr><td colspan='2'><a href=?uuid=" + uuid1 + ">" + uuid1 + "</a></td>");
-                response.getWriter().write("<td>" + resume.getFullName() + "</td></tr>");
+                response.getWriter().write("<td  colspan='2'>" + resume.getFullName() + "</td>");
+                response.getWriter().write("<td  colspan='2'>" + resume.getContacts(ContactTypes.EMAIL) + "</td></tr>");
             }
             response.getWriter().write("</table>");
         }
