@@ -1,4 +1,6 @@
 <%@ page import="com.urise.webapp.model.ContactTypes" %>
+<%@ page import="com.urise.webapp.model.ListSection" %>
+<%@ page import="com.urise.webapp.model.SectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -25,10 +27,61 @@
             <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContacts(type)}"></dd>
         </dl>
         </c:forEach>
-        <h3>Секции</h3>
-        <input type="text" name="section" size="30" value="1"><br/>
-        <input type="text" name="section" size="30" value="2"><br/>
-        <input type="text" name="section" size="30" value="3"><br/>
+        <h3>Секции:</h3>
+        <p>
+
+            <c:forEach var="type2" items="<%=SectionType.values()%>">
+        <dl>
+            <dt>${type2.title}</dt>
+            <c:choose>
+                <c:when test="${type2.name() == 'OBJECTIVE'}">
+                    <dd><textarea name="sectionObjective" placeholder="Введите текст" rows="5"
+                                  cols="100">${resume.getSection(type2)}</textarea></dd>
+                </c:when>
+                <c:when test="${type2.name() == 'PERSONAL'}">
+                    <dd><textarea name="sectionPersonal" placeholder="Введите текст" rows="5"
+                                  cols="100">${resume.getSection(type2)}</textarea></dd>
+                </c:when>
+
+                <c:when test="${type2.name() == 'ACHIEVEMENT'}">
+                    <dd><textarea name="sectionAchievement" placeholder="Введите текст" rows="5"
+                                  cols="100">${""}</textarea></dd>
+                    <c:forEach var="sectionEntry" items="${resume.sections}">
+                        <dl>
+                            <c:choose>
+                                <c:when test="${sectionEntry.getKey() == 'ACHIEVEMENT'}">
+                                    <c:forEach var="item" items="${sectionEntry.getValue().getItems()}">
+                                        <dd><textarea name="sectionAchievement" rows="5" cols="100">${item}</textarea>
+                                        </dd>
+                                    </c:forEach>
+                                </c:when>
+                            </c:choose>
+                        </dl>
+                    </c:forEach>
+                </c:when>
+
+                <c:when test="${type2.name() == 'QUALIFICATIONS'}">
+                    <dd><textarea name="sectionQualifications" placeholder="Введите текст" rows="5"
+                                  cols="100">${""}</textarea></dd>
+                    <c:forEach var="sectionEntry2" items="${resume.sections}">
+                        <dl>
+                            <c:choose>
+                                <c:when test="${sectionEntry2.getKey() == 'QUALIFICATIONS'}">
+                                    <c:forEach var="item2" items="${sectionEntry2.getValue().getItems()}">
+                                        <dd><textarea name="sectionQualifications" rows="5"
+                                                      cols="100">${item2}</textarea></dd>
+                                    </c:forEach>
+                                </c:when>
+                            </c:choose>
+                        </dl>
+                    </c:forEach>
+                </c:when>
+
+            </c:choose>
+        </dl>
+        </c:forEach>
+
+
         </p>
         <hr>
         <button type="submit">Сохранить</button>

@@ -1,6 +1,9 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.*;
+import com.urise.webapp.util.DateUtil;
+
+import java.time.Month;
 
 public class ResumeTestData {
 
@@ -27,25 +30,25 @@ public class ResumeTestData {
                 "JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2",
                 "Version control: Subversion, Git, Mercury, ClearCase, Perforce",
                 "DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,"));
-//
-//        r1.addSections(SectionType.EXPERIENCE, new OrganizationSection(
-//                new Organization("name1", "http://javaops.ru/",
-//                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")),
-//                new Organization("name2", "https://www.wrike.com/",
-//                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."))));
-//
-//        r1.addSections(SectionType.EXPERIENCE, new OrganizationSection(
-//                new Organization("Java Online Projects", "http://javaops.ru/",
-//                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")),
-//                new Organization("Wrike", "https://www.wrike.com/",
-//                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."))));
-//
-//        r1.addSections(SectionType.EDUCATION, new OrganizationSection(
-//                new Organization("Coursera", "https://www.coursera.org/course/progfun",
-//                        new Organization.Position(DateUtil.of(2013, Month.MARCH), DateUtil.of(2013, Month.MAY), "\"Functional Programming Principles in Scala\" by Martin Odersky", null)),
-//                new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/",
-//                        new Organization.Position(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY), "Аспирантура (программист С, С++)", null),
-//                        new Organization.Position(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY), "Инженер (программист Fortran, C)", null))));
+
+        r1.addSections(SectionType.EXPERIENCE, new OrganizationSection(
+                new Organization("name1", "http://javaops.ru/",
+                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")),
+                new Organization("name2", "https://www.wrike.com/",
+                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."))));
+
+        r1.addSections(SectionType.EXPERIENCE, new OrganizationSection(
+                new Organization("Java Online Projects", "http://javaops.ru/",
+                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")),
+                new Organization("Wrike", "https://www.wrike.com/",
+                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."))));
+
+        r1.addSections(SectionType.EDUCATION, new OrganizationSection(
+                new Organization("Coursera", "https://www.coursera.org/course/progfun",
+                        new Organization.Position(DateUtil.of(2013, Month.MARCH), DateUtil.of(2013, Month.MAY), "\"Functional Programming Principles in Scala\" by Martin Odersky", null)),
+                new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/",
+                        new Organization.Position(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY), "Аспирантура (программист С, С++)", null),
+                        new Organization.Position(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY), "Инженер (программист Fortran, C)", null))));
 
         return r1;
     }

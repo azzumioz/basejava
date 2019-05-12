@@ -1,14 +1,16 @@
 package com.urise.webapp.web;
 
 import com.urise.webapp.Config;
-import com.urise.webapp.model.ContactTypes;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ResumeServlet extends HttpServlet {
     private static final Storage storage = Config.get().getStorage();
@@ -21,10 +23,21 @@ public class ResumeServlet extends HttpServlet {
         r.setFullName(fullName);
         for (ContactTypes type : ContactTypes.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
-                r.addContacts(type, value);
-            } else {
-                r.getContacts().remove(type);
+            doSaveContacts(r, type, value);
+        }
+        for (SectionType type : SectionType.values()) {
+            switch (type) {
+                case OBJECTIVE:
+                    doSaveTextSections(r, type, request.getParameter("sectionObjective"));
+                    break;
+                case PERSONAL:
+                    doSaveTextSections(r, type, request.getParameter("sectionPersonal"));
+                    break;
+                case ACHIEVEMENT:
+                    doSaveListSections(r, type, request.getParameterValues("sectionAchievement"));
+                    break;
+                case QUALIFICATIONS:
+                    doSaveListSections(r, type, request.getParameterValues("sectionQualifications"));
             }
         }
         storage.update(r);
@@ -46,7 +59,13 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "view":
             case "edit":
-                r = storage.get(uuid);
+                if (uuid.equals("")) {
+                    storage.save(new Resume("!Новое резюме"));
+                    response.sendRedirect("resume");
+                    return;
+                } else {
+                    r = storage.get(uuid);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
@@ -54,4 +73,31 @@ public class ResumeServlet extends HttpServlet {
         request.setAttribute("resume", r);
         request.getRequestDispatcher("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp").forward(request, response);
     }
+
+    private void doSaveContacts(Resume r, ContactTypes type, String value) {
+        if (value != null && value.trim().length() != 0) {
+            r.addContacts(type, value);
+        } else {
+            r.getContacts().remove(type);
+        }
+    }
+
+    private void doSaveTextSections(Resume r, SectionType type, String value) {
+        if (value != null && value.trim().length() != 0) {
+            r.addSections(type, new TextSection(value));
+        } else {
+            r.getSections().remove(type);
+        }
+    }
+
+    private void doSaveListSections(Resume r, SectionType type, String[] sectionQualifications) {
+        if (sectionQualifications != null && sectionQualifications.length != 0) {
+            List<String> list = Arrays.stream(sectionQualifications).filter((p) -> !p.equals("")).collect(Collectors.toList());
+            r.getSections().remove(type);
+            r.addSections(type, new ListSection(list));
+        } else {
+            r.getSections().remove(type);
+        }
+    }
+
 }
