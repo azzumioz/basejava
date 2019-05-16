@@ -37,8 +37,20 @@ dd {
     vertical-align: top;
 }
 
+textarea {
+    font-family: monospace;
+}
+
+input {
+    font-family: monospace;
+}
+
 textarea::placeholder {
-    color: #89c150;
+    font-style: italic;
+}
+
+input::placeholder {
+    font-style: italic;
 }
 
 tbody {
@@ -47,17 +59,17 @@ tbody {
     border-color: inherit;
 }
 
-a[href^="skype:"] {
-    padding-left: 20px !important;
-    background: url(../img/skype.png) no-repeat center left;
-}
-
 h2, h3 {
     margin: 15px 0 5px;
 }
 
 li {
     margin: 15px 0;
+}
+
+a[href^="skype:"] {
+    padding-left: 20px !important;
+    background: url(../img/skype.png) no-repeat center left;
 }
 
 a[href^="mailto:"] {
@@ -79,3 +91,13 @@ a[href*="github."] {
     padding-left: 20px !important;
     background: url(../img/gh.png) no-repeat center left;
 }
+
+.block-item {
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.block-input {
+    margin-bottom: 5px;
+    }
+

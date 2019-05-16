@@ -32,12 +32,6 @@ public class ResumeTestData {
                 "DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,"));
 
         r1.addSections(SectionType.EXPERIENCE, new OrganizationSection(
-                new Organization("name1", "http://javaops.ru/",
-                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")),
-                new Organization("name2", "https://www.wrike.com/",
-                        new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."))));
-
-        r1.addSections(SectionType.EXPERIENCE, new OrganizationSection(
                 new Organization("Java Online Projects", "http://javaops.ru/",
                         new Organization.Position(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2014, Month.OCTOBER), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")),
                 new Organization("Wrike", "https://www.wrike.com/",

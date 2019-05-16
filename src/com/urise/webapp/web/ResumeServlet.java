@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,10 @@ public class ResumeServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         Resume r = storage.get(uuid);
         r.setFullName(fullName);
+        ArrayList<Integer> index = new ArrayList<>();
+        request.setAttribute("index", index);
+        index.add(0);
+
         for (ContactTypes type : ContactTypes.values()) {
             String value = request.getParameter(type.name());
             doSaveContacts(r, type, value);
@@ -38,6 +43,12 @@ public class ResumeServlet extends HttpServlet {
                     break;
                 case QUALIFICATIONS:
                     doSaveListSections(r, type, request.getParameterValues("sectionQualifications"));
+                    break;
+                case EXPERIENCE:
+//                    doSaveOrganizationSections(r, type, request.getParameterValues("sectionExperience"));
+                    break;
+                case EDUCATION:
+//                    doSaveOrganizationSections(r, type, request.getParameterValues("sectionEducation"));
             }
         }
         storage.update(r);
@@ -47,6 +58,7 @@ public class ResumeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
+
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
@@ -90,14 +102,18 @@ public class ResumeServlet extends HttpServlet {
         }
     }
 
-    private void doSaveListSections(Resume r, SectionType type, String[] sectionQualifications) {
-        if (sectionQualifications != null && sectionQualifications.length != 0) {
-            List<String> list = Arrays.stream(sectionQualifications).filter((p) -> !p.equals("")).collect(Collectors.toList());
+    private void doSaveListSections(Resume r, SectionType type, String[] sectionName) {
+        if (sectionName != null && sectionName.length != 0) {
+            List<String> list = Arrays.stream(sectionName).filter((p) -> !p.equals("")).collect(Collectors.toList());
             r.getSections().remove(type);
             r.addSections(type, new ListSection(list));
         } else {
             r.getSections().remove(type);
         }
+    }
+
+    private void doSaveOrganizationSections(Resume r, SectionType type, String[] sectionQualifications) {
+
     }
 
 }
