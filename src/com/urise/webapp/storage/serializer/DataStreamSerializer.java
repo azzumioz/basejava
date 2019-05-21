@@ -69,13 +69,13 @@ public class DataStreamSerializer implements StreamSerializer {
                 switch (section) {
                     case "OBJECTIVE":
                     case "PERSONAL":
-                        resume.addSections(SectionType.valueOf(section), new TextSection(dis.readUTF()));
+                        resume.setSections(SectionType.valueOf(section), new TextSection(dis.readUTF()));
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATIONS":
                         List<String> listSection = new ArrayList<>();
                         readWithExeption(dis, () -> listSection.add(dis.readUTF()));
-                        resume.addSections(SectionType.valueOf(section), new ListSection(listSection));
+                        resume.setSections(SectionType.valueOf(section), new ListSection(listSection));
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
@@ -87,7 +87,7 @@ public class DataStreamSerializer implements StreamSerializer {
                             readWithExeption(dis, () -> listPositions.add(new Organization.Position(LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF()), dis.readUTF(), readMaybeNull(dis.readUTF()))));
                             listOrganizations.add(new Organization(new Link(name, url), listPositions));
                         });
-                        resume.addSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
+                        resume.setSections(SectionType.valueOf(section), new OrganizationSection(listOrganizations));
                         break;
                 }
             });

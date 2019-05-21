@@ -37,28 +37,6 @@ dd {
     vertical-align: top;
 }
 
-textarea {
-    font-family: monospace;
-}
-
-input {
-    font-family: monospace;
-}
-
-textarea::placeholder {
-    font-style: italic;
-}
-
-input::placeholder {
-    font-style: italic;
-}
-
-tbody {
-    display: table-row-group;
-    vertical-align: middle;
-    border-color: inherit;
-}
-
 h2, h3 {
     margin: 15px 0 5px;
 }
@@ -91,13 +69,3 @@ a[href*="github."] {
     padding-left: 20px !important;
     background: url(../img/gh.png) no-repeat center left;
 }
-
-.block-item {
-    margin-bottom: 5px;
-    margin-left: 10px;
-}
-
-.block-input {
-    margin-bottom: 5px;
-    }
-
